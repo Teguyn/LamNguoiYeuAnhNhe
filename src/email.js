@@ -6,10 +6,9 @@ import emailjs from '@emailjs/browser';
  * Recipient 2: xnguyen107204@gmail.com (Xuân Nguyên)
  */
 export const EMAIL_CONFIG = {
-  // If user sets EmailJS credentials:
-  serviceId: 'service_romance',     // Thay bằng Service ID EmailJS nếu có
-  templateId: 'template_romance',   // Thay bằng Template ID EmailJS nếu có
-  publicKey: 'YOUR_PUBLIC_KEY',     // Thay bằng Public Key EmailJS nếu có
+  serviceId: 'service_z6npd8u',
+  templateId: 'template_fga4zmi',
+  publicKey: '5dTeZA77uNsfQa5YE',
   
   partnerEmail: 'embuonkh@gmail.com',
   myEmail: 'xnguyen107204@gmail.com',
@@ -40,16 +39,22 @@ export async function sendOfficialLoveEmail() {
   const emailParams = {
     partner_email: EMAIL_CONFIG.partnerEmail,
     my_email: EMAIL_CONFIG.myEmail,
+    to_email: `${EMAIL_CONFIG.partnerEmail}, ${EMAIL_CONFIG.myEmail}`,
+    email: EMAIL_CONFIG.myEmail,
+    to_name: 'Bé Ngọc & Xuân Nguyên',
+    from_name: 'Xuân Nguyên ❤️',
+    reply_to: EMAIL_CONFIG.myEmail,
     subject: `💌 [Chính Thức] Giấy Chứng Nhận Tình Yêu: Ngọc Đã Đồng Ý Làm Người Yêu Của Anh Rồi Nhé!`,
     timestamp: timestamp,
+    time: timestamp,
     message: `
 Chúc mừng Bé Ngọc & Anh đã chính thức nên duyên! 💖
 -----------------------------------------------------------
 Vào lúc: ${timestamp}
-Bé Ngọc (embuonkh@gmail.com) đã bấm 'Đồng ý' làm người yêu của anh (xnguyen107204@gmail.com).
+Bé Ngọc (${EMAIL_CONFIG.partnerEmail}) đã bấm 'Đồng ý' làm người yêu của anh (${EMAIL_CONFIG.myEmail}).
 
 Lời nhắn gửi từ trái tim:
-"Cảm ơn em đã bước vào cuộc đời anh. Anh hứa sẽ luôn trân trọng, yêu thương, lắng nghe và mang lại nụ cười cho em mỗi ngày."
+"Cảm ơn em đã bước vào cuộc đời anh. Anh hứa sẽ luôn trân trọng, yêu thương, lắng nghe và cùng em viết nên câu chuyện của hai đứa mình."
 
 Giấy chứng nhận tình yêu này có giá trị vĩnh cửu! 🌹
 -----------------------------------------------------------
@@ -57,37 +62,24 @@ Giấy chứng nhận tình yêu này có giá trị vĩnh cửu! 🌹
   };
 
   try {
-    // Attempt EmailJS send if credentials configured
-    if (EMAIL_CONFIG.publicKey !== 'YOUR_PUBLIC_KEY') {
-      await emailjs.send(
-        EMAIL_CONFIG.serviceId,
-        EMAIL_CONFIG.templateId,
-        emailParams,
-        EMAIL_CONFIG.publicKey
-      );
-      return {
-        success: true,
-        message: `Đã gửi thành công email xác nhận tới ${EMAIL_CONFIG.partnerEmail} và ${EMAIL_CONFIG.myEmail}!`,
-        mode: 'emailjs',
-        timestamp
-      };
-    } else {
-      // Simulate API call for seamless demonstration without breaking
-      await new Promise(resolve => setTimeout(resolve, 1400));
-      console.log('💌 [Love Email Dispatch System Simulated]:', emailParams);
-      
-      return {
-        success: true,
-        message: `Đã xác nhận thành đôi! Thư chứng nhận tình yêu đã sẵn sàng gửi tới ${EMAIL_CONFIG.partnerEmail} và ${EMAIL_CONFIG.myEmail}.`,
-        mode: 'ready',
-        timestamp
-      };
-    }
-  } catch (error) {
-    console.warn('EmailJS error, fallback to client record:', error);
+    const response = await emailjs.send(
+      EMAIL_CONFIG.serviceId,
+      EMAIL_CONFIG.templateId,
+      emailParams,
+      EMAIL_CONFIG.publicKey
+    );
+    console.log('✅ EmailJS sent successfully:', response);
     return {
       success: true,
-      message: `Đã lưu giấy chứng nhận tình yêu chính thức của Anh & Ngọc vào hệ thống!`,
+      message: `Đã gửi thành công email xác nhận tới ${EMAIL_CONFIG.partnerEmail} và ${EMAIL_CONFIG.myEmail}!`,
+      mode: 'emailjs',
+      timestamp
+    };
+  } catch (error) {
+    console.warn('⚠️ EmailJS error, fallback to client record:', error);
+    return {
+      success: true,
+      message: `Đã ghi nhận khoảnh khắc chính thức thành đôi của Anh & Bé Ngọc!`,
       mode: 'fallback',
       timestamp
     };

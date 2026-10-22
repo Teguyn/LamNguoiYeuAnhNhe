@@ -1,268 +1,282 @@
 <!doctype html>
 <html lang="vi">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Gửi Bé Ngọc 💌 | Lời Tỏ Tình Từ Trái Tim</title>
-    
-    <!-- Meta SEO & Open Graph -->
-    <meta name="description" content="Trang web tỏ tình đặc biệt dành riêng cho Ngọc. Làm người yêu anh nhé!" />
-    <meta name="theme-color" content="#070714" />
-    <meta property="og:title" content="Gửi Bé Ngọc 💌 - Bức Thư Bí Mật Dành Riêng Cho Em" />
-    <meta property="og:description" content="Có một điều anh đã giấu kín trong tim bấy lâu nay... Chạm vào để xem nhé!" />
-    <meta property="og:type" content="website" />
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Dancing+Script:wght@600;700&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff3366'><path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>" />
-  </head>
-  <body>
-    <!-- Three.js 3D Background Canvas -->
-    <canvas id="webgl-canvas"></canvas>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Gửi Bé Ngọc 💌 | Lời Tỏ Tình Từ Trái Tim</title>
 
-    <!-- Music Control Player -->
-    <div class="music-controller" id="music-btn" title="Bật/Tắt nhạc lãng mạn">
-      <div class="music-icon-wrap">
-        <svg class="music-note-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M9 18V5l12-2v13"></path>
-          <circle cx="6" cy="18" r="3"></circle>
-          <circle cx="18" cy="16" r="3"></circle>
-        </svg>
-      </div>
-      <div class="equalizer" id="equalizer">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-      </div>
-      <span class="music-text">Ánh Nắng Của Anh 🎵</span>
+  <!-- Meta SEO & Open Graph -->
+  <meta name="description" content="Trang web tỏ tình đặc biệt dành riêng cho Ngọc. Làm người yêu anh nhé!" />
+  <meta name="theme-color" content="#070714" />
+  <meta property="og:title" content="Gửi Bé Ngọc 💌 - Bức Thư Bí Mật Dành Riêng Cho Em" />
+  <meta property="og:description" content="Có một điều anh đã giấu kín trong tim bấy lâu nay... Chạm vào để xem nhé!" />
+  <meta property="og:type" content="website" />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Dancing+Script:wght@600;700&family=Playfair+Display:ital,wght@0,600;0,800;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ff3366'><path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>" />
+</head>
+
+<body>
+  <!-- Three.js 3D Background Canvas -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- Music Control Player -->
+  <div class="music-controller" id="music-btn" title="Bật/Tắt nhạc lãng mạn">
+    <div class="music-icon-wrap">
+      <svg class="music-note-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M9 18V5l12-2v13"></path>
+        <circle cx="6" cy="18" r="3"></circle>
+        <circle cx="18" cy="16" r="3"></circle>
+      </svg>
     </div>
+    <div class="equalizer" id="equalizer">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </div>
+    <span class="music-text">Ánh Nắng Của Anh 🎵</span>
+  </div>
 
-    <!-- Main Interactive Container -->
-    <main id="app">
-      
-      <!-- SCENE 1: The Sealed Letter Envelope -->
-      <section class="scene active" id="scene-envelope">
-        <div class="envelope-wrapper">
-          <div class="ambient-glow"></div>
-          
-          <div class="letter-badge">Dành riêng cho cô gái anh thương ✨</div>
+  <!-- Main Interactive Container -->
+  <main id="app">
 
-          <div class="envelope-card" id="envelope-card">
-            <div class="wax-seal" id="wax-seal">
-              <span class="seal-letter">N</span>
-              <div class="seal-ring"></div>
-            </div>
-            
-            <div class="envelope-front">
-              <h2 class="envelope-title">Gửi Bé Ngọc 💌</h2>
-              <p class="envelope-sub">Trong vũ trụ bao la, gặp được em là điều kỳ diệu nhất đối với anh.</p>
-              <div class="envelope-prompt">
-                <span class="sparkle-icon">✨</span> Chạm nhẹ để mở bức thư bí mật <span class="sparkle-icon">✨</span>
-              </div>
+    <!-- SCENE 1: The Sealed Letter Envelope -->
+    <section class="scene active" id="scene-envelope">
+      <div class="envelope-wrapper">
+        <div class="ambient-glow"></div>
+
+        <div class="letter-badge">Dành riêng cho cô gái anh thương ✨</div>
+
+        <div class="envelope-card" id="envelope-card">
+          <div class="wax-seal" id="wax-seal">
+            <span class="seal-letter">N</span>
+            <div class="seal-ring"></div>
+          </div>
+
+          <div class="envelope-front">
+            <h2 class="envelope-title">Gửi Bé Ngọc 💌</h2>
+            <p class="envelope-sub">Trong vũ trụ bao la, gặp được em là điều kỳ diệu nhất đối với anh.</p>
+            <div class="envelope-prompt">
+              <span class="sparkle-icon">✨</span> Chạm nhẹ để mở bức thư bí mật <span class="sparkle-icon">✨</span>
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- SCENE 2: The Romantic Story & Memories Journey -->
-      <section class="scene" id="scene-journey">
-        <div class="journey-container">
-          <div class="journey-header">
-            <span class="badge-tag">Hành Trình Trái Tim</span>
-            <h2 class="journey-title">Những Điều Về Ngọc Khiến Anh Nhớ Mãi</h2>
-          </div>
-
-          <!-- Carousel / Story Cards -->
-          <div class="story-cards-wrapper">
-            <div class="story-card active" data-step="1">
-              <div class="card-glass-glow"></div>
-              <div class="card-icon">🌸</div>
-              <h3 class="card-title">Cuộc Gặp Gỡ Định Mệnh</h3>
-              <p class="card-desc">
-                Từ những cuộc trò chuyện đầu tiên, ánh mắt và nụ cười của em đã vô thức len lỏi vào tâm trí anh lúc nào không hay.
-              </p>
-            </div>
-
-            <div class="story-card" data-step="2">
-              <div class="card-glass-glow"></div>
-              <div class="card-icon">✨</div>
-              <h3 class="card-title">Sự Dịu Dàng Của Em</h3>
-              <p class="card-desc">
-                Anh thương cách Ngọc lắng nghe, cách em giận hờn vu vơ hay những khi em cười rạng rỡ. Mọi khoảnh khắc bên em đều trở nên vô giá.
-              </p>
-            </div>
-
-            <div class="story-card" data-step="3">
-              <div class="card-glass-glow"></div>
-              <div class="card-icon">💫</div>
-              <h3 class="card-title">Tiếng Nói Từ Trái Tim</h3>
-              <p class="card-desc">
-                Anh không còn muốn chỉ là một người tìm hiểu... Anh muốn được chính thức chở che, chăm sóc và cùng em viết nên câu chuyện hạnh phúc dài lâu.
-              </p>
-            </div>
-          </div>
-
-          <!-- Story navigation -->
-          <div class="story-controls">
-            <div class="story-dots">
-              <span class="dot active"></span>
-              <span class="dot"></span>
-              <span class="dot"></span>
-            </div>
-            <button class="btn-primary" id="btn-next-story">
-              <span>Đọc tiếp lời trái tim</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="9 18 15 12 9 6"></polyline>
-              </svg>
-            </button>
-          </div>
+    <!-- SCENE 2: The Romantic Story & Memories Journey -->
+    <section class="scene" id="scene-journey">
+      <div class="journey-container">
+        <div class="journey-header">
+          <span class="badge-tag">Hành Trình Trái Tim</span>
+          <h2 class="journey-title">Những Điều Về Ngọc Khiến Anh Nhớ Mãi</h2>
         </div>
-      </section>
 
-      <!-- SCENE 3: The 3D Heart & The Big Proposal -->
-      <section class="scene" id="scene-proposal">
-        <div class="proposal-container">
-          
-          <div class="proposal-badge">
-            <span class="pulsing-heart">❤️</span>
-            <span>Lời Thổ Lộ Chân Thành Nhất</span>
-          </div>
-
-          <h1 class="proposal-heading">
-            Ngọc à...<br>
-            <span class="highlight-gradient">Làm Người Yêu Anh Nhé?</span>
-          </h1>
-
-          <div class="proposal-quote-card">
-            <p class="proposal-quote">
-              "Nếu khoảng cách giữa chúng ta là một ngàn bước, chỉ cần em bước một bước đầu tiên, chín trăm chín mươi chín bước còn lại... hãy để anh chạy về phía em."
+        <!-- Carousel / Story Cards -->
+        <div class="story-cards-wrapper">
+          <div class="story-card active" data-step="1">
+            <div class="card-glass-glow"></div>
+            <div class="card-icon">🌸</div>
+            <h3 class="card-title">Cuộc Gặp Gỡ Định Mệnh</h3>
+            <p class="card-desc">
+              Từ những cuộc trò chuyện đầu tiên, ánh mắt và nụ cười của em đã vô thức len lỏi vào tâm trí anh lúc nào
+              không hay.
             </p>
           </div>
 
-          <!-- Interactive Action Buttons -->
-          <div class="proposal-actions">
-            <!-- Yes Button -->
-            <button class="btn-yes" id="btn-yes">
-              <div class="btn-glow"></div>
-              <span class="btn-yes-text">Dạ, em đồng ý! 💖</span>
-              <span class="btn-yes-sub">Chính thức thuộc về anh</span>
-            </button>
-
-            <!-- Playful Runaway No Button -->
-            <button class="btn-no" id="btn-no">
-              <span class="btn-no-text">Em cần suy nghĩ... 🙈</span>
-            </button>
+          <div class="story-card" data-step="2">
+            <div class="card-glass-glow"></div>
+            <div class="card-icon">✨</div>
+            <h3 class="card-title">Sự Dịu Dàng Của Em</h3>
+            <p class="card-desc">
+              Anh thương cách Ngọc lắng nghe, cách em giận hờn vu vơ hay những khi em cười rạng rỡ. Mọi khoảnh khắc bên
+              em đều trở nên vô giá.
+            </p>
           </div>
 
-          <!-- Playful runaway tooltip bubble -->
-          <div class="dodge-bubble" id="dodge-bubble"></div>
+          <div class="story-card" data-step="3">
+            <div class="card-glass-glow"></div>
+            <div class="card-icon">💫</div>
+            <h3 class="card-title">Tiếng Nói Từ Trái Tim</h3>
+            <p class="card-desc">
+              Anh không còn muốn chỉ là một người tìm hiểu... Anh muốn được chính thức chở che, chăm sóc và cùng em viết
+              nên câu chuyện hạnh phúc dài lâu.
+            </p>
+          </div>
         </div>
-      </section>
 
-      <!-- SCENE 4: She Said YES! - Certificate & Celebration -->
-      <section class="scene" id="scene-celebration">
-        <div class="celebration-container">
-          
-          <div class="fireworks-badge">🎉 CHÍNH THỨC THÀNH ĐÔI 🎉</div>
-          
-          <h2 class="celebration-title">Chào Mừng Em Đến Với Thế Giới Của Anh!</h2>
-          <p class="celebration-sub">Cảm ơn Ngọc vì đã tin tưởng và đồng ý cùng anh bước vào hành trình tình yêu ngọt ngào này.</p>
+        <!-- Story navigation -->
+        <div class="story-controls">
+          <div class="story-dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+          </div>
+          <button class="btn-primary" id="btn-next-story">
+            <span>Đọc tiếp lời trái tim</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
 
-          <!-- 3D Holographic Love Certificate -->
-          <div class="love-certificate" id="love-certificate">
-            <div class="cert-border">
-              <div class="cert-seal-gold">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                </svg>
-              </div>
+    <!-- SCENE 3: The 3D Heart & The Big Proposal -->
+    <section class="scene" id="scene-proposal">
+      <div class="proposal-container">
 
-              <div class="cert-header">
-                <span class="cert-super">GIẤY CHỨNG NHẬN TÌNH YÊU CHÍNH THỨC</span>
-                <h3 class="cert-couple">Anh Nguyễn & Bé Ngọc</h3>
-                <div class="cert-divider"></div>
-              </div>
+        <div class="proposal-badge">
+          <span class="pulsing-heart">❤️</span>
+          <span>Lời Thổ Lộ Chân Thành Nhất</span>
+        </div>
 
-              <div class="cert-body">
-                <p class="cert-text">
-                  Kể từ ngày hôm nay, chúng ta chính thức là một nửa của nhau. Hứa sẽ luôn lắng nghe, thấu hiểu, trân trọng và yêu thương em thật nhiều.
-                </p>
+        <h1 class="proposal-heading">
+          Ngọc à...<br>
+          <span class="highlight-gradient">Làm Người Yêu Anh Nhé?</span>
+        </h1>
 
-                <!-- Love Stopwatch Counter -->
-                <div class="love-timer-box">
-                  <span class="timer-label">Thời gian bên nhau chính thức:</span>
-                  <div class="timer-digits">
-                    <div class="timer-segment">
-                      <span class="digit" id="timer-days">00</span>
-                      <span class="unit">Ngày</span>
-                    </div>
-                    <div class="timer-segment">
-                      <span class="digit" id="timer-hours">00</span>
-                      <span class="unit">Giờ</span>
-                    </div>
-                    <div class="timer-segment">
-                      <span class="digit" id="timer-mins">00</span>
-                      <span class="unit">Phút</span>
-                    </div>
-                    <div class="timer-segment">
-                      <span class="digit" id="timer-secs">00</span>
-                      <span class="unit">Giây</span>
-                    </div>
+        <div class="proposal-quote-card">
+          <p class="proposal-quote">
+            "Nếu khoảng cách giữa chúng ta là một ngàn bước, chỉ cần em bước một bước đầu tiên, chín trăm chín mươi chín
+            bước còn lại... hãy để anh chạy về phía em."
+          </p>
+        </div>
+
+        <!-- Interactive Action Buttons -->
+        <div class="proposal-actions">
+          <!-- Yes Button -->
+          <button class="btn-yes" id="btn-yes">
+            <div class="btn-glow"></div>
+            <span class="btn-yes-text">Dạ, em đồng ý! 💖</span>
+            <span class="btn-yes-sub">Chính thức thuộc về anh</span>
+          </button>
+
+          <!-- Playful Runaway No Button -->
+          <button class="btn-no" id="btn-no">
+            <span class="btn-no-text">Em cần suy nghĩ... 🙈</span>
+          </button>
+        </div>
+
+        <!-- Playful runaway tooltip bubble -->
+        <div class="dodge-bubble" id="dodge-bubble"></div>
+      </div>
+    </section>
+
+    <!-- SCENE 4: She Said YES! - Certificate & Celebration -->
+    <section class="scene" id="scene-celebration">
+      <div class="celebration-container">
+
+        <div class="fireworks-badge">🎉 CHÍNH THỨC THÀNH ĐÔI 🎉</div>
+
+        <h2 class="celebration-title">Chào Mừng Em Đến Với Thế Giới Của Anh!</h2>
+        <p class="celebration-sub">Cảm ơn Ngọc vì đã tin tưởng và đồng ý cùng anh bước vào hành trình tình yêu ngọt ngào
+          này.</p>
+
+        <!-- 3D Holographic Love Certificate -->
+        <div class="love-certificate" id="love-certificate">
+          <div class="cert-border">
+            <div class="cert-seal-gold">
+              <svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+              </svg>
+            </div>
+
+            <div class="cert-header">
+              <span class="cert-super">GIẤY CHỨNG NHẬN TÌNH YÊU CHÍNH THỨC</span>
+              <h3 class="cert-couple">Anh Nguyên & Bé Ngọc</h3>
+              <div class="cert-divider"></div>
+            </div>
+
+            <div class="cert-body">
+              <p class="cert-text">
+                Kể từ ngày hôm nay, chúng ta chính thức là một nửa của nhau. Hứa sẽ luôn lắng nghe, thấu hiểu, trân
+                trọng và yêu thương em thật nhiều.
+              </p>
+
+              <!-- Love Stopwatch Counter -->
+              <div class="love-timer-box">
+                <span class="timer-label">Thời gian bên nhau chính thức:</span>
+                <div class="timer-digits">
+                  <div class="timer-segment">
+                    <span class="digit" id="timer-days">00</span>
+                    <span class="unit">Ngày</span>
+                  </div>
+                  <div class="timer-segment">
+                    <span class="digit" id="timer-hours">00</span>
+                    <span class="unit">Giờ</span>
+                  </div>
+                  <div class="timer-segment">
+                    <span class="digit" id="timer-mins">00</span>
+                    <span class="unit">Phút</span>
+                  </div>
+                  <div class="timer-segment">
+                    <span class="digit" id="timer-secs">00</span>
+                    <span class="unit">Giây</span>
                   </div>
                 </div>
-
-                <!-- Email Confirmation Status Box -->
-                <div class="email-status-card" id="email-status-card">
-                  <div class="email-status-icon">
-                    <svg class="mail-spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                      <polyline points="22,6 12,13 2,6"></polyline>
-                    </svg>
-                  </div>
-                  <div class="email-status-info">
-                    <h4 class="email-status-title" id="email-status-title">Đang gửi thư chứng nhận tình yêu...</h4>
-                    <p class="email-status-desc" id="email-status-desc">
-                      Hệ thống đang tự động gửi thư xác nhận tới <strong>embuonkh@gmail.com</strong> và <strong>xnguyen107204@gmail.com</strong>.
-                    </p>
-                  </div>
-                </div>
               </div>
 
-              <div class="cert-footer">
-                <div class="cert-signature">
-                  <span class="sign-title">Đại diện bên Anh</span>
-                  <span class="sign-name">Xuân Nguyên</span>
+              <!-- Email Confirmation Status Box -->
+              <div class="email-status-card" id="email-status-card">
+                <div class="email-status-icon">
+                  <svg class="mail-spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                    <polyline points="22,6 12,13 2,6"></polyline>
+                  </svg>
                 </div>
-                <div class="cert-signature">
-                  <span class="sign-title">Đại diện bên Em</span>
-                  <span class="sign-name">Bé Ngọc ❤️</span>
+                <div class="email-status-info">
+                  <h4 class="email-status-title" id="email-status-title">Đang gửi thư chứng nhận tình yêu...</h4>
+                  <p class="email-status-desc" id="email-status-desc">
+                    Hệ thống đang tự động gửi thư xác nhận tới <strong>embuonkh@gmail.com</strong> và
+                    <strong>xnguyen107204@gmail.com</strong>.
+                  </p>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Bottom Action Buttons -->
-          <div class="celebration-actions">
-            <button class="btn-fireworks" id="btn-more-fireworks">
-              <span>Bắn thêm pháo hoa 🎆</span>
-            </button>
-            <button class="btn-secondary" id="btn-save-cert">
-              <span>Chụp ảnh kỷ niệm 📸</span>
-            </button>
+            <div class="cert-footer">
+              <div class="cert-signature">
+                <span class="sign-title">Đại diện bên Anh</span>
+                <span class="sign-name">Xuân Nguyên</span>
+              </div>
+              <div class="cert-signature">
+                <span class="sign-title">Đại diện bên Em</span>
+                <span class="sign-name">Bé Ngọc ❤️</span>
+              </div>
+            </div>
           </div>
-
         </div>
-      </section>
 
-    </main>
+        <!-- Bottom Action Buttons -->
+        <div class="celebration-actions">
+          <button class="btn-fireworks" id="btn-more-fireworks">
+            <span>Bắn thêm pháo hoa 🎆</span>
+          </button>
+          <button class="btn-secondary" id="btn-save-cert">
+            <span>Chụp ảnh kỷ niệm 📸</span>
+          </button>
+        </div>
 
-    <!-- Audio Player (Fallback Audio) -->
-    <audio id="bg-music" loop preload="auto"></audio>
+      </div>
+    </section>
 
-    <script type="module" src="/src/main.js"></script>
-  </body>
+  </main>
+
+  <!-- Audio Player (Fallback Audio) -->
+  <audio id="bg-music" loop preload="auto"></audio>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+
 </html>
