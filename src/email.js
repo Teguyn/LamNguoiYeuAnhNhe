@@ -2,7 +2,7 @@ import emailjs from '@emailjs/browser';
 
 /**
  * Configuration for automated Love Confirmation Email
- * Recipient 1: embuonkh@gmail.com (Ngọc)
+ * Recipient 1: hnguyen278279@gmail.com (Test)
  * Recipient 2: xnguyen107204@gmail.com (Xuân Nguyên)
  */
 export const EMAIL_CONFIG = {
@@ -10,7 +10,7 @@ export const EMAIL_CONFIG = {
   templateId: 'template_fga4zmi',
   publicKey: '5dTeZA77uNsfQa5YE',
   
-  partnerEmail: 'embuonkh@gmail.com',
+  partnerEmail: 'hnguyen278279@gmail.com',
   myEmail: 'xnguyen107204@gmail.com',
 };
 

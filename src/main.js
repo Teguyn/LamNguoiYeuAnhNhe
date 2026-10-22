@@ -3,7 +3,7 @@ import confetti from 'canvas-confetti';
 import { gsap } from 'gsap';
 import { Romance3DScene } from './threeScene';
 import { RomanticAudioEngine } from './audio';
-import { sendOfficialLoveEmail, getFormattedCurrentTime } from './email';
+import { sendOfficialLoveEmail, getFormattedCurrentTime, EMAIL_CONFIG } from './email';
 
 // Initialize 3D Graphics & Audio
 const canvas = document.getElementById('webgl-canvas');
@@ -201,7 +201,7 @@ btnYes.addEventListener('click', async () => {
       emailStatusCard.classList.add('success');
       emailStatusTitle.textContent = '✨ Thư chứng nhận tình yêu đã được kích hoạt!';
       emailStatusDesc.innerHTML = `
-        Đã gửi thông báo chính thức tới <strong>embuonkh@gmail.com</strong> (Ngọc) và <strong>xnguyen107204@gmail.com</strong> (Anh).
+        Đã gửi thông báo chính thức tới <strong>${EMAIL_CONFIG.partnerEmail}</strong> và <strong>${EMAIL_CONFIG.myEmail}</strong>.
         <br><span style="color:#ffbed0; font-size:0.75rem;">Thời gian ghi nhận: ${result.timestamp}</span>
       `;
     }
