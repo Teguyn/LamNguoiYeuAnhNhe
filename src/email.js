@@ -5,7 +5,7 @@ export const EMAIL_CONFIG = {
   templateId: 'template_fga4zmi',
   publicKey: '5dTeZA77uNsfQa5YE',
 
-  partnerEmail: 'hnguyen278279@gmail.com', // test mail — đổi lại embuonkh@gmail.com khi dùng thật
+  partnerEmail: 'hnguyen278279', // test mail — đổi lại embuonkh@gmail.com khi dùng thật
   myEmail: 'xnguyen107204@gmail.com',
 };
 

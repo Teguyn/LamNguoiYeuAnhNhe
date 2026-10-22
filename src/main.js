@@ -18,33 +18,33 @@ createPetals();
 // ======================================================
 // DOM References
 // ======================================================
-const musicBtn        = document.getElementById('music-btn');
-const sceneEnvelope   = document.getElementById('scene-envelope');
-const envelopeCard    = document.getElementById('envelope-card');
-const sceneJourney    = document.getElementById('scene-journey');
-const btnNextStory    = document.getElementById('btn-next-story');
-const storyCards      = document.querySelectorAll('.story-card');
-const storyDots       = document.querySelectorAll('.story-dots .dot');
-const sceneProposal   = document.getElementById('scene-proposal');
-const btnYes          = document.getElementById('btn-yes');
-const btnNo           = document.getElementById('btn-no');
-const dodgeBubble     = document.getElementById('dodge-bubble');
+const musicBtn = document.getElementById('music-btn');
+const sceneEnvelope = document.getElementById('scene-envelope');
+const envelopeCard = document.getElementById('envelope-card');
+const sceneJourney = document.getElementById('scene-journey');
+const btnNextStory = document.getElementById('btn-next-story');
+const storyCards = document.querySelectorAll('.story-card');
+const storyDots = document.querySelectorAll('.story-dots .dot');
+const sceneProposal = document.getElementById('scene-proposal');
+const btnYes = document.getElementById('btn-yes');
+const btnNo = document.getElementById('btn-no');
+const dodgeBubble = document.getElementById('dodge-bubble');
 const proposalActions = document.getElementById('proposal-actions-area');
-const sceneCelebration  = document.getElementById('scene-celebration');
-const btnMoreFireworks  = document.getElementById('btn-more-fireworks');
-const btnSaveCert       = document.getElementById('btn-save-cert');
-const emailStatusCard   = document.getElementById('email-status-card');
-const emailStatusTitle  = document.getElementById('email-status-title');
-const emailStatusDesc   = document.getElementById('email-status-desc');
-const timerDays   = document.getElementById('timer-days');
-const timerHours  = document.getElementById('timer-hours');
-const timerMins   = document.getElementById('timer-mins');
-const timerSecs   = document.getElementById('timer-secs');
+const sceneCelebration = document.getElementById('scene-celebration');
+const btnMoreFireworks = document.getElementById('btn-more-fireworks');
+const btnSaveCert = document.getElementById('btn-save-cert');
+const emailStatusCard = document.getElementById('email-status-card');
+const emailStatusTitle = document.getElementById('email-status-title');
+const emailStatusDesc = document.getElementById('email-status-desc');
+const timerDays = document.getElementById('timer-days');
+const timerHours = document.getElementById('timer-hours');
+const timerMins = document.getElementById('timer-mins');
+const timerSecs = document.getElementById('timer-secs');
 
 const LOVE_START_KEY = 'ngoc_love_start_ts';
 
-let storyIndex    = 0;
-let dodgeCount    = 0;
+let storyIndex = 0;
+let dodgeCount = 0;
 let loveStartTime = null;
 let timerInterval = null;
 
@@ -193,8 +193,8 @@ function dodgeNoButton(e) {
 
   // Get the bounding box of the actions container
   const areaRect = proposalActions.getBoundingClientRect();
-  const btnRect  = btnNo.getBoundingClientRect();
-  const yesRect  = btnYes.getBoundingClientRect();
+  const btnRect = btnNo.getBoundingClientRect();
+  const yesRect = btnYes.getBoundingClientRect();
 
   const padding = 10;
   const maxX = areaRect.width - btnRect.width - padding;
@@ -217,7 +217,7 @@ function dodgeNoButton(e) {
   btnNo.style.position = 'absolute';
   btnNo.style.transform = 'none';
   btnNo.style.left = `${newX}px`;
-  btnNo.style.top  = `${newY}px`;
+  btnNo.style.top = `${newY}px`;
   btnNo.style.bottom = 'auto';
 
   // Show dodge bubble message
@@ -281,9 +281,9 @@ btnYes.addEventListener('click', async () => {
 // 6. CONFETTI ENGINE
 // ======================================================
 function triggerFullCelebrationConfetti() {
-  const duration  = 6000;
-  const endTime   = Date.now() + duration;
-  const colors    = ['#ff2d60', '#ff758c', '#ffd1dc', '#ffeaa7', '#c084fc'];
+  const duration = 6000;
+  const endTime = Date.now() + duration;
+  const colors = ['#ff2d60', '#ff758c', '#ffd1dc', '#ffeaa7', '#c084fc'];
 
   // Initial center burst
   confetti({
@@ -296,7 +296,7 @@ function triggerFullCelebrationConfetti() {
 
   // Side cannons
   const frame = () => {
-    confetti({ particleCount: 5, angle: 60,  spread: 55, origin: { x: 0 }, colors });
+    confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 }, colors });
     confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors });
     if (Date.now() < endTime) requestAnimationFrame(frame);
   };
@@ -319,14 +319,14 @@ function startLoveTimer() {
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(() => {
     if (!loveStartTime) return;
-    const diff    = Date.now() - loveStartTime;
-    const secs    = Math.floor((diff / 1000) % 60);
-    const mins    = Math.floor((diff / 60000) % 60);
-    const hours   = Math.floor((diff / 3600000) % 24);
-    const days    = Math.floor(diff / 86400000);
-    timerDays.textContent  = String(days).padStart(2, '0');
+    const diff = Date.now() - loveStartTime;
+    const secs = Math.floor((diff / 1000) % 60);
+    const mins = Math.floor((diff / 60000) % 60);
+    const hours = Math.floor((diff / 3600000) % 24);
+    const days = Math.floor(diff / 86400000);
+    timerDays.textContent = String(days).padStart(2, '0');
     timerHours.textContent = String(hours).padStart(2, '0');
-    timerMins.textContent  = String(mins).padStart(2, '0');
-    timerSecs.textContent  = String(secs).padStart(2, '0');
+    timerMins.textContent = String(mins).padStart(2, '0');
+    timerSecs.textContent = String(secs).padStart(2, '0');
   }, 1000);
 }
