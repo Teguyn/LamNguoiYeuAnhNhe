@@ -3,199 +3,217 @@ import confetti from 'canvas-confetti';
 import { gsap } from 'gsap';
 import { Romance3DScene } from './threeScene';
 import { RomanticAudioEngine } from './audio';
-import { sendOfficialLoveEmail, getFormattedCurrentTime, EMAIL_CONFIG } from './email';
+import { sendOfficialLoveEmail, EMAIL_CONFIG } from './email';
 
+// ======================================================
 // Initialize 3D Graphics & Audio
+// ======================================================
 const canvas = document.getElementById('webgl-canvas');
 const romanceScene = new Romance3DScene(canvas);
 const audioEngine = new RomanticAudioEngine();
 
-// DOM Elements
-const musicBtn = document.getElementById('music-btn');
-const sceneEnvelope = document.getElementById('scene-envelope');
-const envelopeCard = document.getElementById('envelope-card');
-const sceneJourney = document.getElementById('scene-journey');
-const btnNextStory = document.getElementById('btn-next-story');
-const storyCards = document.querySelectorAll('.story-card');
-const storyDots = document.querySelectorAll('.story-dots .dot');
+// Create floating rose petals
+createPetals();
 
-const sceneProposal = document.getElementById('scene-proposal');
-const btnYes = document.getElementById('btn-yes');
-const btnNo = document.getElementById('btn-no');
-const dodgeBubble = document.getElementById('dodge-bubble');
+// ======================================================
+// DOM References
+// ======================================================
+const musicBtn        = document.getElementById('music-btn');
+const sceneEnvelope   = document.getElementById('scene-envelope');
+const envelopeCard    = document.getElementById('envelope-card');
+const sceneJourney    = document.getElementById('scene-journey');
+const btnNextStory    = document.getElementById('btn-next-story');
+const storyCards      = document.querySelectorAll('.story-card');
+const storyDots       = document.querySelectorAll('.story-dots .dot');
+const sceneProposal   = document.getElementById('scene-proposal');
+const btnYes          = document.getElementById('btn-yes');
+const btnNo           = document.getElementById('btn-no');
+const dodgeBubble     = document.getElementById('dodge-bubble');
+const proposalActions = document.getElementById('proposal-actions-area');
+const sceneCelebration  = document.getElementById('scene-celebration');
+const btnMoreFireworks  = document.getElementById('btn-more-fireworks');
+const btnSaveCert       = document.getElementById('btn-save-cert');
+const emailStatusCard   = document.getElementById('email-status-card');
+const emailStatusTitle  = document.getElementById('email-status-title');
+const emailStatusDesc   = document.getElementById('email-status-desc');
+const timerDays   = document.getElementById('timer-days');
+const timerHours  = document.getElementById('timer-hours');
+const timerMins   = document.getElementById('timer-mins');
+const timerSecs   = document.getElementById('timer-secs');
 
-const sceneCelebration = document.getElementById('scene-celebration');
-const btnMoreFireworks = document.getElementById('btn-more-fireworks');
-const btnSaveCert = document.getElementById('btn-save-cert');
-
-const emailStatusCard = document.getElementById('email-status-card');
-const emailStatusTitle = document.getElementById('email-status-title');
-const emailStatusDesc = document.getElementById('email-status-desc');
-
-// Timer digits
-const timerDays = document.getElementById('timer-days');
-const timerHours = document.getElementById('timer-hours');
-const timerMins = document.getElementById('timer-mins');
-const timerSecs = document.getElementById('timer-secs');
-
-let storyIndex = 0;
-let dodgeCount = 0;
+let storyIndex    = 0;
+let dodgeCount    = 0;
 let loveStartTime = null;
 let timerInterval = null;
 
 // Playful messages when she tries to click "No"
 const dodgeMessages = [
   'Ơ kìa, đừng bấm vào đây mà 🥺',
-  'Ngọc ơi, suy nghĩ lại một xíu đi mừ! 💕',
-  'Nút này bị khoá rùi, chọn nút bên kia nha 🙈',
-  'Anh hứa sẽ luôn yêu thương và chiều chuộng em mà!',
+  'Ngọc ơi, suy nghĩ lại đi mà! 💕',
+  'Nút này đang ngại... chọn nút hồng kia nha! 🙈',
+  'Anh hứa sẽ chiều chuộng em mà! 🌹',
   'Không cho Ngọc từ chối đâu nà! 🏃💨',
-  'Bé Ngọc bấm nhầm nút đúng hông? Bấm nút hồng kìa 🥰',
-  'Dạ em đồng ý đi mà, năn nỉ đó nha ❤️'
+  'Bé Ngọc bấm nhầm nút rồi kìa! 🥰',
+  'Dạ em đồng ý đi mà, năn nỉ đó nha ❤️',
 ];
 
-/* ========================================================= */
-/* 1. MUSIC CONTROLLER                                       */
-/* ========================================================= */
+// ======================================================
+// 0. FLOATING PETALS
+// ======================================================
+function createPetals() {
+  const layer = document.getElementById('petals-layer');
+  if (!layer) return;
+  const count = window.innerWidth < 600 ? 10 : 18;
+  for (let i = 0; i < count; i++) {
+    const petal = document.createElement('div');
+    petal.className = 'petal';
+    const size = 12 + Math.random() * 14;
+    const left = Math.random() * 100;
+    const duration = 8 + Math.random() * 14;
+    const delay = Math.random() * -20;
+    const hue = 340 + Math.random() * 30;
+    petal.style.cssText = `
+      left: ${left}%;
+      width: ${size}px;
+      height: ${size * 1.2}px;
+      animation-duration: ${duration}s;
+      animation-delay: ${delay}s;
+      background: radial-gradient(ellipse at 40% 30%,
+        hsla(${hue},90%,80%,0.9),
+        hsla(${hue},75%,55%,0.5));
+      transform: rotate(${Math.random() * 360}deg);
+    `;
+    layer.appendChild(petal);
+  }
+}
+
+// ======================================================
+// 1. MUSIC CONTROLLER
+// ======================================================
 musicBtn.addEventListener('click', () => {
   const isPlaying = audioEngine.toggleMusic();
   musicBtn.classList.toggle('playing', isPlaying);
 });
 
-/* ========================================================= */
-/* 2. SCENE 1 -> SCENE 2: OPEN ENVELOPE                      */
-/* ========================================================= */
+// ======================================================
+// 2. SCENE 1 → SCENE 2: OPEN ENVELOPE
+// ======================================================
 envelopeCard.addEventListener('click', () => {
   audioEngine.playSparkleSound();
   audioEngine.startMusic();
   musicBtn.classList.add('playing');
 
-  // GSAP Envelope opening animation
   gsap.to(envelopeCard, {
-    scale: 1.15,
+    scale: 1.12,
     opacity: 0,
-    duration: 0.8,
+    duration: 0.75,
     ease: 'power3.in',
     onComplete: () => {
       sceneEnvelope.classList.remove('active');
       sceneJourney.classList.add('active');
-
       gsap.fromTo(
         '.journey-container',
-        { opacity: 0, y: 30 },
+        { opacity: 0, y: 32 },
         { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out' }
       );
-    }
+    },
   });
 });
 
-/* ========================================================= */
-/* 3. SCENE 2: STORY CARDS PROGRESSION                       */
-/* ========================================================= */
+// ======================================================
+// 3. SCENE 2: STORY CARD PROGRESSION
+// ======================================================
 btnNextStory.addEventListener('click', () => {
   audioEngine.playSparkleSound();
   storyIndex++;
 
   if (storyIndex < storyCards.length) {
-    // Switch to next card
-    storyCards.forEach((card, idx) => {
-      card.classList.toggle('active', idx === storyIndex);
-    });
-    storyDots.forEach((dot, idx) => {
-      dot.classList.toggle('active', idx === storyIndex);
-    });
+    storyCards.forEach((card, idx) => card.classList.toggle('active', idx === storyIndex));
+    storyDots.forEach((dot, idx) => dot.classList.toggle('active', idx === storyIndex));
 
     if (storyIndex === storyCards.length - 1) {
       btnNextStory.querySelector('span').textContent = 'Điều anh muốn nói nhất 💖';
     }
   } else {
-    // Transition to Scene 3: Proposal
     gsap.to(sceneJourney, {
       opacity: 0,
       duration: 0.6,
       onComplete: () => {
         sceneJourney.classList.remove('active');
         sceneProposal.classList.add('active');
-
         gsap.fromTo(
           '.proposal-container',
-          { opacity: 0, scale: 0.9, y: 20 },
-          { opacity: 1, scale: 1, y: 0, duration: 0.9, ease: 'back.out(1.4)' }
+          { opacity: 0, scale: 0.88, y: 24 },
+          { opacity: 1, scale: 1, y: 0, duration: 0.9, ease: 'back.out(1.5)' }
         );
-      }
+      },
     });
   }
 });
 
-/* ========================================================= */
-/* 4. SCENE 3: PROPOSAL INTERACTION                          */
-/* ========================================================= */
-
-// Playful runaway function for "No" button with safe mobile bounds
+// ======================================================
+// 4. SCENE 3: NO BUTTON — Jumps inside the actions box
+// ======================================================
 function dodgeNoButton(e) {
   if (e) e.preventDefault();
   audioEngine.playWhooshSound();
   dodgeCount++;
 
-  const rect = btnNo.getBoundingClientRect();
-  const yesRect = btnYes.getBoundingClientRect();
+  // Get the bounding box of the actions container
+  const areaRect = proposalActions.getBoundingClientRect();
+  const btnRect  = btnNo.getBoundingClientRect();
+  const yesRect  = btnYes.getBoundingClientRect();
 
-  const safeWidth = Math.min(window.innerWidth, document.documentElement.clientWidth);
-  const safeHeight = Math.min(window.innerHeight, document.documentElement.clientHeight);
+  const padding = 10;
+  const maxX = areaRect.width - btnRect.width - padding;
+  const maxY = areaRect.height - btnRect.height - padding;
 
-  const minX = 18;
-  const maxX = Math.max(minX, safeWidth - rect.width - 18);
-  const minY = 90;  // Avoid top notch & music player
-  const maxY = Math.max(minY, safeHeight - rect.height - 90); // Avoid mobile bottom nav
-
-  let randomX = Math.floor(minX + Math.random() * (maxX - minX));
-  let randomY = Math.floor(minY + Math.random() * (maxY - minY));
-
-  // Ensure it doesn't overlap directly on top of the Yes button
+  let newX, newY;
   let attempts = 0;
-  while (
-    attempts < 8 &&
-    Math.abs(randomX - yesRect.left) < 80 &&
-    Math.abs(randomY - yesRect.top) < 60
-  ) {
-    randomX = Math.floor(minX + Math.random() * (maxX - minX));
-    randomY = Math.floor(minY + Math.random() * (maxY - minY));
+
+  do {
+    newX = padding + Math.random() * Math.max(0, maxX - padding);
+    newY = padding + Math.random() * Math.max(0, maxY - padding);
     attempts++;
-  }
+  } while (
+    attempts < 10 &&
+    Math.abs(newX - (yesRect.left - areaRect.left)) < 80 &&
+    Math.abs(newY - (yesRect.top - areaRect.top)) < 60
+  );
 
-  // Change style to fixed to safely jump around screen without disappearing
-  btnNo.style.position = 'fixed';
-  btnNo.style.left = `${randomX}px`;
-  btnNo.style.top = `${randomY}px`;
-  btnNo.style.zIndex = '9999';
+  // Switch to absolute inside proposal-actions for safe containment
+  btnNo.style.position = 'absolute';
+  btnNo.style.transform = 'none';
+  btnNo.style.left = `${newX}px`;
+  btnNo.style.top  = `${newY}px`;
+  btnNo.style.bottom = 'auto';
 
-  // Show cute tooltip message as a top notification bubble
+  // Show dodge bubble message
   const msg = dodgeMessages[dodgeCount % dodgeMessages.length];
   dodgeBubble.textContent = msg;
   dodgeBubble.classList.add('show');
-  dodgeBubble.style.top = '72px';
-  dodgeBubble.style.left = '50%';
-  dodgeBubble.style.transform = 'translateX(-50%)';
 
-  // Grow the Yes button slightly to encourage clicking
-  const yesScale = Math.min(1.26, 1 + dodgeCount * 0.04);
-  btnYes.style.transform = `scale(${yesScale})`;
+  // Auto-hide bubble after 2s
+  clearTimeout(dodgeBubble._timer);
+  dodgeBubble._timer = setTimeout(() => dodgeBubble.classList.remove('show'), 2200);
+
+  // Grow the Yes button slightly each time she tries No
+  const scale = Math.min(1.22, 1 + dodgeCount * 0.04);
+  gsap.to(btnYes, { scale, duration: 0.3, ease: 'back.out(2)' });
 }
 
 btnNo.addEventListener('mouseenter', dodgeNoButton);
 btnNo.addEventListener('touchstart', dodgeNoButton, { passive: false });
 btnNo.addEventListener('click', dodgeNoButton);
 
-// "YES" BUTTON CLICKED!
+// ======================================================
+// 5. YES BUTTON — Celebration!
+// ======================================================
 btnYes.addEventListener('click', async () => {
-  // Celebration sounds & 3D supernova
   audioEngine.playCelebrationSound();
   romanceScene.triggerSupernova();
-
-  // Multi-stage fireworks & confetti bursts
   triggerFullCelebrationConfetti();
 
-  // Transition to Celebration Scene
   gsap.to(sceneProposal, {
     opacity: 0,
     duration: 0.6,
@@ -205,13 +223,12 @@ btnYes.addEventListener('click', async () => {
       dodgeBubble.classList.remove('show');
       sceneCelebration.classList.add('active');
 
-      // Start Love Timer
       loveStartTime = Date.now();
       startLoveTimer();
-    }
+    },
   });
 
-  // Dispatch Email Notification to both emails
+  // Send email
   try {
     const result = await sendOfficialLoveEmail();
     if (result.success) {
@@ -219,50 +236,36 @@ btnYes.addEventListener('click', async () => {
       emailStatusTitle.textContent = '✨ Thư chứng nhận tình yêu đã được kích hoạt!';
       emailStatusDesc.innerHTML = `
         Đã gửi thông báo chính thức tới <strong>${EMAIL_CONFIG.partnerEmail}</strong> và <strong>${EMAIL_CONFIG.myEmail}</strong>.
-        <br><span style="color:#ffbed0; font-size:0.75rem;">Thời gian ghi nhận: ${result.timestamp}</span>
+        <br><span style="color:rgba(255,192,203,0.8);font-size:0.75rem;">Thời gian ghi nhận: ${result.timestamp}</span>
       `;
     }
   } catch (err) {
-    console.error('Email trigger error:', err);
+    console.error('Email error:', err);
   }
 });
 
-/* ========================================================= */
-/* 5. FIREWORKS & CONFETTI ENGINE                            */
-/* ========================================================= */
+// ======================================================
+// 6. CONFETTI ENGINE
+// ======================================================
 function triggerFullCelebrationConfetti() {
-  const duration = 6 * 1000;
-  const animationEnd = Date.now() + duration;
+  const duration  = 6000;
+  const endTime   = Date.now() + duration;
+  const colors    = ['#ff2d60', '#ff758c', '#ffd1dc', '#ffeaa7', '#c084fc'];
 
-  // Initial center blast with hearts & stars
+  // Initial center burst
   confetti({
-    particleCount: 120,
+    particleCount: 130,
     spread: 100,
-    origin: { y: 0.6 },
-    colors: ['#ff3366', '#ff758c', '#ffd1dc', '#ffeaa7', '#a855f7'],
-    shapes: ['circle', 'square']
+    origin: { y: 0.58 },
+    colors,
+    shapes: ['circle', 'square'],
   });
 
-  // Continuous side cannons
+  // Side cannons
   const frame = () => {
-    confetti({
-      particleCount: 4,
-      angle: 60,
-      spread: 55,
-      origin: { x: 0 },
-      colors: ['#ff2d60', '#ff9472', '#ffeaa7']
-    });
-    confetti({
-      particleCount: 4,
-      angle: 120,
-      spread: 55,
-      origin: { x: 1 },
-      colors: ['#ff2d60', '#ff758c', '#ffd1dc']
-    });
-
-    if (Date.now() < animationEnd) {
-      requestAnimationFrame(frame);
-    }
+    confetti({ particleCount: 5, angle: 60,  spread: 55, origin: { x: 0 }, colors });
+    confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 }, colors });
+    if (Date.now() < endTime) requestAnimationFrame(frame);
   };
   frame();
 }
@@ -273,27 +276,24 @@ btnMoreFireworks.addEventListener('click', () => {
 });
 
 btnSaveCert.addEventListener('click', () => {
-  alert('📸 Hãy chụp lại màn hình hoặc lưu link này để giữ làm kỷ niệm ngày hai ta chính thức yêu nhau nhé, Ngọc yêu! ❤️');
+  alert('📸 Hãy chụp lại màn hình để lưu kỷ niệm ngày hai ta chính thức yêu nhau nhé, Ngọc yêu! ❤️');
 });
 
-/* ========================================================= */
-/* 6. LOVE STOPWATCH TIMER                                   */
-/* ========================================================= */
+// ======================================================
+// 7. LOVE STOPWATCH TIMER
+// ======================================================
 function startLoveTimer() {
   if (timerInterval) clearInterval(timerInterval);
-
   timerInterval = setInterval(() => {
     if (!loveStartTime) return;
-    const diff = Date.now() - loveStartTime;
-
-    const seconds = Math.floor((diff / 1000) % 60);
-    const minutes = Math.floor((diff / (1000 * 60)) % 60);
-    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-    timerDays.textContent = String(days).padStart(2, '0');
+    const diff    = Date.now() - loveStartTime;
+    const secs    = Math.floor((diff / 1000) % 60);
+    const mins    = Math.floor((diff / 60000) % 60);
+    const hours   = Math.floor((diff / 3600000) % 24);
+    const days    = Math.floor(diff / 86400000);
+    timerDays.textContent  = String(days).padStart(2, '0');
     timerHours.textContent = String(hours).padStart(2, '0');
-    timerMins.textContent = String(minutes).padStart(2, '0');
-    timerSecs.textContent = String(seconds).padStart(2, '0');
+    timerMins.textContent  = String(mins).padStart(2, '0');
+    timerSecs.textContent  = String(secs).padStart(2, '0');
   }, 1000);
 }
