@@ -91,8 +91,9 @@ Trang web đã được tích hợp sẵn thư viện `@emailjs/browser`. Để 
    ```
 
 ### Bước 2: Bật GitHub Pages tự động
-1. Vào repo trên GitHub -> bấm tab **Settings** -> mục **Pages**.
+1. Vào repo: [https://github.com/Teguyn/LamNguoiYeuAnhNhe/settings/pages](https://github.com/Teguyn/LamNguoiYeuAnhNhe/settings/pages)
 2. Ở phần **Build and deployment** -> **Source**: Chọn **GitHub Actions**.
-3. Quy trình tự động [deploy.yml](file:///d:/NgocIu/LamNguoiYeuAnhNhe/.github/workflows/deploy.yml) sẽ tự động build và cấp cho bạn link web dạng:
-   `https://<tài-khoản>.github.io/LamNguoiYeuAnhNhe/`
-4. Copy đường link này và gửi ngay cho Bé Ngọc nhé! 💕
+3. Quy trình tự động [deploy.yml](.github/workflows/deploy.yml) sẽ tự động kích hoạt, build và xuất bản trang web.
+4. Sau 1-2 phút, trang web của bạn sẽ hoạt động trực tiếp tại:
+   👉 **`https://teguyn.github.io/LamNguoiYeuAnhNhe/`**
+5. Copy đường link này và gửi ngay cho Bé Ngọc nhé! 💕
