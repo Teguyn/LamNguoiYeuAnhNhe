@@ -1,23 +1,23 @@
 import emailjs from '@emailjs/browser';
 
 export const EMAIL_CONFIG = {
-  serviceId:   'service_z6npd8u',
-  templateId:  'template_fga4zmi',
-  publicKey:   '5dTeZA77uNsfQa5YE',
+  serviceId: 'service_z6npd8u',
+  templateId: 'template_fga4zmi',
+  publicKey: '5dTeZA77uNsfQa5YE',
 
   partnerEmail: 'hnguyen278279@gmail.com', // test mail — đổi lại embuonkh@gmail.com khi dùng thật
-  myEmail:      'xnguyen107204@gmail.com',
+  myEmail: 'xnguyen107204@gmail.com',
 };
 
 export function getFormattedCurrentTime() {
   return new Date().toLocaleString('vi-VN', {
     weekday: 'long',
-    year:    'numeric',
-    month:   'long',
-    day:     'numeric',
-    hour:    '2-digit',
-    minute:  '2-digit',
-    second:  '2-digit',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
   });
 }
 
@@ -189,7 +189,7 @@ function buildLoveCertificateHTML(timestamp) {
 
   <!-- Banner header -->
   <div class="banner">
-    <div class="hearts-row">💕 🌹 💕</div>
+    <div class="hearts-row">💕 💕 💕</div>
     <div class="banner-from">Một bức thư đặc biệt từ Xuân Nguyên</div>
     <div class="banner-title">Giấy Chứng Nhận Tình Yêu</div>
     <div class="banner-subtitle">
@@ -221,24 +221,24 @@ function buildLoveCertificateHTML(timestamp) {
     <!-- Info rows -->
     <div style="margin:20px 0 0">
       <div class="info-row">
-        <span class="info-label">📅 Ngày chính thức</span>
+        <span class="info-label">Ngày chính thức</span>
         <span class="info-value">${timestamp}</span>
       </div>
       <div class="info-row">
-        <span class="info-label">💌 Người gửi</span>
+        <span class="info-label">Người gửi</span>
         <span class="info-value">Xuân Nguyên (xnguyen107204@gmail.com)</span>
       </div>
       <div class="info-row">
-        <span class="info-label">🌸 Người nhận</span>
+        <span class="info-label">Người nhận</span>
         <span class="info-value">Bé Ngọc (${EMAIL_CONFIG.partnerEmail})</span>
       </div>
       <div class="info-row">
-        <span class="info-label">✅ Trạng thái</span>
+        <span class="info-label">Trạng thái</span>
         <span class="info-value" style="color:#6ee7b7;font-weight:700;">Đã xác nhận — Em đồng ý rồi! 💖</span>
       </div>
       <div class="info-row">
-        <span class="info-label">⏳ Hiệu lực</span>
-        <span class="info-value" style="color:#fcd34d">Mãi mãi và vĩnh cửu 💍</span>
+        <span class="info-label">Hiệu lực</span>
+        <span class="info-value" style="color:#fcd34d"> Mãi mãi và vĩnh cửu 💍</span>
       </div>
     </div>
 
@@ -278,23 +278,23 @@ function buildLoveCertificateHTML(timestamp) {
  */
 export async function sendOfficialLoveEmail() {
   const timestamp = getFormattedCurrentTime();
-  const htmlCard  = buildLoveCertificateHTML(timestamp);
+  const htmlCard = buildLoveCertificateHTML(timestamp);
 
   const emailParams = {
     partner_email: EMAIL_CONFIG.partnerEmail,
-    my_email:      EMAIL_CONFIG.myEmail,
-    to_email:      `${EMAIL_CONFIG.partnerEmail}, ${EMAIL_CONFIG.myEmail}`,
-    email:         EMAIL_CONFIG.myEmail,
-    name:          'Xuân Nguyên',
-    from_name:     'Xuân Nguyên ❤️',
-    reply_to:      EMAIL_CONFIG.myEmail,
-    subject:       '💌 [Chính Thức] Giấy Chứng Nhận Tình Yêu — Ngọc Đã Đồng Ý Rồi! 🌹',
+    my_email: EMAIL_CONFIG.myEmail,
+    to_email: `${EMAIL_CONFIG.partnerEmail}, ${EMAIL_CONFIG.myEmail}`,
+    email: EMAIL_CONFIG.myEmail,
+    name: 'Xuân Nguyên',
+    from_name: 'Xuân Nguyên ❤️',
+    reply_to: EMAIL_CONFIG.myEmail,
+    subject: '💌 [Chính Thức] Giấy Chứng Nhận Tình Yêu — Ngọc Đã Đồng Ý Rồi! 🌹',
     timestamp,
-    time:          timestamp,
+    time: timestamp,
     // Plain text fallback
-    message:       `✨ Giấy Chứng Nhận Tình Yêu ✨\n\nXuân Nguyên & Bé Ngọc\n\n"Kể từ khoảnh khắc này, chúng ta chính thức là một nửa của nhau."\n\n📅 Ngày chính thức: ${timestamp}\n✅ Trạng thái: Em đã đồng ý! 💖\n⏳ Hiệu lực: Mãi mãi và vĩnh cửu 💍`,
+    message: `✨ Giấy Chứng Nhận Tình Yêu ✨\n\nXuân Nguyên & Bé Ngọc\n\n"Kể từ khoảnh khắc này, chúng ta chính thức là một nửa của nhau."\n\n📅 Ngày chính thức: ${timestamp}\n✅ Trạng thái: Em đã đồng ý! 💖\n⏳ Hiệu lực: Mãi mãi và vĩnh cửu 💍`,
     // HTML thiệp đẹp — EmailJS template cần dùng {{{html_content}}}
-    html_content:  htmlCard,
+    html_content: htmlCard,
   };
 
   try {
