@@ -13,8 +13,9 @@ export class Romance3DScene {
     this.initCamera();
     this.initRenderer();
     this.createStarfield();
+    this.createFireflies();
     this.create3DParticleHeart();
-    this.createFloatingPetals();
+    this.create3DRosePetals();
     this.bindEvents();
     this.animate();
   }
@@ -37,7 +38,7 @@ export class Romance3DScene {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   }
 
-  // Create subtle circular texture for glowing particle dots
+  // Create smooth radial gradient particle texture
   getParticleTexture() {
     const canvas = document.createElement('canvas');
     canvas.width = 64;
@@ -46,8 +47,8 @@ export class Romance3DScene {
 
     const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
     gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
-    gradient.addColorStop(0.3, 'rgba(255, 130, 180, 0.8)');
-    gradient.addColorStop(0.7, 'rgba(255, 50, 120, 0.2)');
+    gradient.addColorStop(0.25, 'rgba(255, 120, 170, 0.9)');
+    gradient.addColorStop(0.6, 'rgba(255, 45, 96, 0.3)');
     gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
     ctx.fillStyle = gradient;
@@ -58,31 +59,32 @@ export class Romance3DScene {
 
   // Background starry universe
   createStarfield() {
-    const starCount = 2500;
+    const starCount = 2000;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(starCount * 3);
     const colors = new Float32Array(starCount * 3);
 
-    const color1 = new THREE.Color('#ffffff');
-    const color2 = new THREE.Color('#ff85a1');
-    const color3 = new THREE.Color('#b388ff');
+    const cWhite = new THREE.Color('#ffffff');
+    const cRose = new THREE.Color('#ff85a1');
+    const cViolet = new THREE.Color('#c084fc');
 
     for (let i = 0; i < starCount; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 140;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 140;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 100 - 20;
+      positions[i * 3] = (Math.random() - 0.5) * 160;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 160;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 100 - 30;
 
-      const mixedColor = Math.random() > 0.6 ? color2 : (Math.random() > 0.5 ? color3 : color1);
-      colors[i * 3] = mixedColor.r;
-      colors[i * 3 + 1] = mixedColor.g;
-      colors[i * 3 + 2] = mixedColor.b;
+      const rand = Math.random();
+      const col = rand > 0.7 ? cRose : (rand > 0.4 ? cViolet : cWhite);
+      colors[i * 3] = col.r;
+      colors[i * 3 + 1] = col.g;
+      colors[i * 3 + 2] = col.b;
     }
 
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     const material = new THREE.PointsMaterial({
-      size: 0.5,
+      size: 0.55,
       vertexColors: true,
       transparent: true,
       opacity: 0.85,
@@ -95,72 +97,98 @@ export class Romance3DScene {
     this.scene.add(this.stars);
   }
 
-  // Mathematical 3D Parametric Heart
+  // Floating ambient stardust & fireflies
+  createFireflies() {
+    const fireflyCount = 120;
+    const geometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(fireflyCount * 3);
+    this.fireflySpeeds = [];
+
+    for (let i = 0; i < fireflyCount; i++) {
+      positions[i * 3] = (Math.random() - 0.5) * 60;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 50;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 30;
+
+      this.fireflySpeeds.push({
+        x: (Math.random() - 0.5) * 0.02,
+        y: 0.01 + Math.random() * 0.02,
+        phase: Math.random() * Math.PI * 2
+      });
+    }
+
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+    const material = new THREE.PointsMaterial({
+      size: 1.1,
+      color: new THREE.Color('#ffd166'),
+      map: this.getParticleTexture(),
+      blending: THREE.AdditiveBlending,
+      transparent: true,
+      opacity: 0.8,
+      depthWrite: false
+    });
+
+    this.fireflies = new THREE.Points(geometry, material);
+    this.scene.add(this.fireflies);
+  }
+
+  // 3D Mathematical Parametric Heart with core & outer halo
   create3DParticleHeart() {
-    const particleCount = 8500;
+    const particleCount = 9500;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
-    this.originalHeartPositions = new Float32Array(particleCount * 3);
     this.heartVelocities = new Float32Array(particleCount * 3);
 
-    const baseColor1 = new THREE.Color('#ff2d60'); // Bright hot pink
-    const baseColor2 = new THREE.Color('#ff758c'); // Soft rose
-    const baseColor3 = new THREE.Color('#ffd1dc'); // Highlight pink/white
+    const cCrimson = new THREE.Color('#ff1744');
+    const cRose = new THREE.Color('#ff4081');
+    const cGold = new THREE.Color('#ffeaa7');
 
     for (let i = 0; i < particleCount; i++) {
-      // Parametric 3D Heart coordinates
       const t = Math.PI * 2 * Math.random();
       const u = Math.PI * (Math.random() - 0.5);
 
-      // Core heart formula
       let x = 16 * Math.pow(Math.sin(t), 3);
       let y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
-      let z = u * 10 * Math.sin(t);
+      let z = u * 11 * Math.sin(t);
 
-      // Add volumetric thickness & natural jitter
-      const thickness = (Math.random() - 0.5) * 4;
+      // Volume expansion & 3D curvature
+      const thickness = (Math.random() - 0.5) * 3.8;
       x += thickness * Math.sin(t);
       y += thickness * Math.cos(t);
-      z += thickness * 3;
+      z += thickness * 3.2;
 
-      // Scale to fit scene comfortably
-      const scale = 0.55;
+      // Fit gracefully into frame
+      const scale = 0.52;
       x *= scale;
       y *= scale;
       z *= scale;
 
       positions[i * 3] = x;
-      positions[i * 3 + 1] = y + 1.5; // Slight vertical centering
+      positions[i * 3 + 1] = y + 1.2;
       positions[i * 3 + 2] = z;
 
-      this.originalHeartPositions[i * 3] = x;
-      this.originalHeartPositions[i * 3 + 1] = y + 1.5;
-      this.originalHeartPositions[i * 3 + 2] = z;
+      this.heartVelocities[i * 3] = (Math.random() - 0.5) * 0.45;
+      this.heartVelocities[i * 3 + 1] = (Math.random() - 0.5) * 0.45;
+      this.heartVelocities[i * 3 + 2] = (Math.random() - 0.5) * 0.45;
 
-      // Velocities for supernova effect
-      this.heartVelocities[i * 3] = (Math.random() - 0.5) * 0.4;
-      this.heartVelocities[i * 3 + 1] = (Math.random() - 0.5) * 0.4;
-      this.heartVelocities[i * 3 + 2] = (Math.random() - 0.5) * 0.4;
-
-      // Gradient coloring
-      const colorRatio = Math.random();
-      const c = colorRatio > 0.7 ? baseColor3 : (colorRatio > 0.3 ? baseColor1 : baseColor2);
-      colors[i * 3] = c.r;
-      colors[i * 3 + 1] = c.g;
-      colors[i * 3 + 2] = c.b;
+      const ratio = Math.random();
+      const col = ratio > 0.8 ? cGold : (ratio > 0.4 ? cCrimson : cRose);
+      colors[i * 3] = col.r;
+      colors[i * 3 + 1] = col.g;
+      colors[i * 3 + 2] = col.b;
     }
 
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     const material = new THREE.PointsMaterial({
-      size: 0.9,
+      size: 0.95,
       vertexColors: true,
       map: this.getParticleTexture(),
       blending: THREE.AdditiveBlending,
       transparent: true,
-      opacity: 0.95,
+      opacity: 0.92,
       depthWrite: false
     });
 
@@ -168,42 +196,87 @@ export class Romance3DScene {
     this.scene.add(this.heart);
   }
 
-  // Floating ambient light petals
-  createFloatingPetals() {
-    const petalCount = 80;
-    const geometry = new THREE.BufferGeometry();
-    const positions = new Float32Array(petalCount * 3);
-    this.petalVelocities = [];
+  // REALISTIC 3D ROSE PETALS (Geometric Curved Meshes)
+  create3DRosePetals() {
+    this.petalMeshes = [];
+    this.petalGroup = new THREE.Group();
+
+    // Create an organic curved rose petal geometry
+    const petalShape = new THREE.Shape();
+    petalShape.moveTo(0, -0.6);
+    petalShape.bezierCurveTo(0.5, -0.3, 0.7, 0.4, 0, 0.8);
+    petalShape.bezierCurveTo(-0.7, 0.4, -0.5, -0.3, 0, -0.6);
+
+    const baseGeometry = new THREE.ShapeGeometry(petalShape, 12);
+
+    // Curve the petal vertices so it's not flat
+    const pos = baseGeometry.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const px = pos.getX(i);
+      const py = pos.getY(i);
+      // Gentle spoon cup curve
+      const pz = -Math.sin(Math.abs(px) * 2) * 0.25 + (py * py) * 0.12;
+      pos.setZ(i, pz);
+    }
+    baseGeometry.computeVertexNormals();
+
+    const petalColors = [
+      '#e11d48', // Rich crimson rose
+      '#f43f5e', // Vibrant rose pink
+      '#be123c', // Deep wine velvet
+      '#fda4af'  // Tender pink highlight
+    ];
+
+    const petalCount = 45;
 
     for (let i = 0; i < petalCount; i++) {
-      positions[i * 3] = (Math.random() - 0.5) * 40;
-      positions[i * 3 + 1] = (Math.random() - 0.5) * 40;
-      positions[i * 3 + 2] = (Math.random() - 0.5) * 20;
-
-      this.petalVelocities.push({
-        y: -0.02 - Math.random() * 0.03,
-        x: (Math.random() - 0.5) * 0.02,
-        rotSpeed: (Math.random() - 0.5) * 0.02
+      const color = petalColors[i % petalColors.length];
+      const material = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(color),
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.75 + Math.random() * 0.2
       });
+
+      const mesh = new THREE.Mesh(baseGeometry, material);
+
+      // Random initial position spread
+      mesh.position.set(
+        (Math.random() - 0.5) * 45,
+        (Math.random() - 0.5) * 45,
+        (Math.random() - 0.5) * 25
+      );
+
+      // Random scale for natural variance
+      const scale = 0.7 + Math.random() * 0.8;
+      mesh.scale.set(scale, scale, scale);
+
+      // Random rotation
+      mesh.rotation.set(
+        Math.random() * Math.PI,
+        Math.random() * Math.PI,
+        Math.random() * Math.PI
+      );
+
+      // Custom velocity & rotational tumbling speeds
+      mesh.userData = {
+        fallSpeed: 0.03 + Math.random() * 0.04,
+        driftSpeedX: (Math.random() - 0.5) * 0.015,
+        driftSpeedZ: (Math.random() - 0.5) * 0.015,
+        rotSpeedX: (Math.random() - 0.5) * 0.025,
+        rotSpeedY: (Math.random() - 0.5) * 0.03,
+        rotSpeedZ: (Math.random() - 0.5) * 0.02,
+        oscillationSpeed: 1 + Math.random() * 2,
+        phase: Math.random() * Math.PI * 2
+      };
+
+      this.petalMeshes.push(mesh);
+      this.petalGroup.add(mesh);
     }
 
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
-    const material = new THREE.PointsMaterial({
-      size: 1.4,
-      color: new THREE.Color('#ff85a1'),
-      map: this.getParticleTexture(),
-      blending: THREE.AdditiveBlending,
-      transparent: true,
-      opacity: 0.6,
-      depthWrite: false
-    });
-
-    this.petals = new THREE.Points(geometry, material);
-    this.scene.add(this.petals);
+    this.scene.add(this.petalGroup);
   }
 
-  // Trigger heart celebration explosion
   triggerSupernova() {
     this.heartState = 'supernova';
   }
@@ -229,56 +302,80 @@ export class Romance3DScene {
 
     const elapsedTime = this.clock.getElapsedTime();
 
-    // Smooth mouse parallax lerp
+    // Mouse parallax smoothing
     this.mouse.x += (this.mouse.targetX - this.mouse.x) * 0.05;
     this.mouse.y += (this.mouse.targetY - this.mouse.y) * 0.05;
 
-    // Slow stars rotation
+    // Stars gentle motion
     if (this.stars) {
-      this.stars.rotation.y = elapsedTime * 0.03;
-      this.stars.rotation.x = this.mouse.y * 0.08;
+      this.stars.rotation.y = elapsedTime * 0.025;
+      this.stars.rotation.x = this.mouse.y * 0.06;
     }
 
-    // Heart pulsation & rotation
+    // Fireflies floating
+    if (this.fireflies) {
+      const positions = this.fireflies.geometry.attributes.position.array;
+      for (let i = 0; i < this.fireflySpeeds.length; i++) {
+        const speed = this.fireflySpeeds[i];
+        positions[i * 3 + 1] += speed.y;
+        positions[i * 3] += Math.sin(elapsedTime * 0.8 + speed.phase) * 0.02;
+
+        if (positions[i * 3 + 1] > 25) {
+          positions[i * 3 + 1] = -25;
+          positions[i * 3] = (Math.random() - 0.5) * 60;
+        }
+      }
+      this.fireflies.geometry.attributes.position.needsUpdate = true;
+    }
+
+    // 3D Heart pulsation
     if (this.heart) {
       if (this.heartState === 'normal') {
-        // Realistic double heartbeat rhythm (lub-dub)
-        const t = elapsedTime * 3.2;
-        const beat = Math.sin(t) * 0.07 + Math.sin(t * 2) * 0.03;
+        const t = elapsedTime * 3.4;
+        const beat = Math.sin(t) * 0.08 + Math.sin(t * 2) * 0.035;
         const scale = 1 + Math.max(0, beat);
         this.heart.scale.set(scale, scale, scale);
 
-        // Smooth interactive rotation
-        this.heart.rotation.y = Math.sin(elapsedTime * 0.4) * 0.2 + this.mouse.x * 0.4;
-        this.heart.rotation.x = Math.cos(elapsedTime * 0.3) * 0.1 - this.mouse.y * 0.2;
-        this.heart.rotation.z = Math.sin(elapsedTime * 0.2) * 0.05;
+        this.heart.rotation.y = Math.sin(elapsedTime * 0.35) * 0.2 + this.mouse.x * 0.35;
+        this.heart.rotation.x = Math.cos(elapsedTime * 0.25) * 0.1 - this.mouse.y * 0.2;
+        this.heart.rotation.z = Math.sin(elapsedTime * 0.2) * 0.04;
       } else if (this.heartState === 'supernova') {
-        // Supernova explosion: particles expand outward with glittering speed
         const positions = this.heart.geometry.attributes.position.array;
         for (let i = 0; i < positions.length / 3; i++) {
-          positions[i * 3] += this.heartVelocities[i * 3] * 1.5;
-          positions[i * 3 + 1] += this.heartVelocities[i * 3 + 1] * 1.5;
-          positions[i * 3 + 2] += this.heartVelocities[i * 3 + 2] * 1.5;
+          positions[i * 3] += this.heartVelocities[i * 3] * 1.6;
+          positions[i * 3 + 1] += this.heartVelocities[i * 3 + 1] * 1.6;
+          positions[i * 3 + 2] += this.heartVelocities[i * 3 + 2] * 1.6;
         }
         this.heart.geometry.attributes.position.needsUpdate = true;
-        this.heart.rotation.y += 0.02;
+        this.heart.rotation.y += 0.03;
       }
     }
 
-    // Animate falling petals
-    if (this.petals) {
-      const petalPositions = this.petals.geometry.attributes.position.array;
-      for (let i = 0; i < this.petalVelocities.length; i++) {
-        petalPositions[i * 3 + 1] += this.petalVelocities[i].y;
-        petalPositions[i * 3] += Math.sin(elapsedTime + i) * 0.01;
+    // 3D Rose Petals Falling & Tumbling with Wind
+    if (this.petalMeshes) {
+      for (let i = 0; i < this.petalMeshes.length; i++) {
+        const petal = this.petalMeshes[i];
+        const data = petal.userData;
 
-        // Reset when fallen below screen
-        if (petalPositions[i * 3 + 1] < -20) {
-          petalPositions[i * 3 + 1] = 20;
-          petalPositions[i * 3] = (Math.random() - 0.5) * 40;
+        // Falling down
+        petal.position.y -= data.fallSpeed;
+
+        // Gentle organic wind drift
+        petal.position.x += Math.sin(elapsedTime * data.oscillationSpeed + data.phase) * 0.03 + data.driftSpeedX;
+        petal.position.z += Math.cos(elapsedTime * data.oscillationSpeed + data.phase) * 0.02 + data.driftSpeedZ;
+
+        // 3D tumbling rotation
+        petal.rotation.x += data.rotSpeedX;
+        petal.rotation.y += data.rotSpeedY;
+        petal.rotation.z += data.rotSpeedZ;
+
+        // Reset to top when fallen off screen
+        if (petal.position.y < -22) {
+          petal.position.y = 24;
+          petal.position.x = (Math.random() - 0.5) * 45;
+          petal.position.z = (Math.random() - 0.5) * 25;
         }
       }
-      this.petals.geometry.attributes.position.needsUpdate = true;
     }
 
     this.renderer.render(this.scene, this.camera);

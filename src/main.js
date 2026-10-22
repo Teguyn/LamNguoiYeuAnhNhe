@@ -131,38 +131,55 @@ btnNextStory.addEventListener('click', () => {
 /* 4. SCENE 3: PROPOSAL INTERACTION                          */
 /* ========================================================= */
 
-// Playful runaway function for "No" button
+// Playful runaway function for "No" button with safe mobile bounds
 function dodgeNoButton(e) {
   if (e) e.preventDefault();
   audioEngine.playWhooshSound();
   dodgeCount++;
 
   const rect = btnNo.getBoundingClientRect();
-  const maxX = window.innerWidth - rect.width - 40;
-  const maxY = window.innerHeight - rect.height - 40;
+  const yesRect = btnYes.getBoundingClientRect();
 
-  const randomX = Math.max(20, Math.floor(Math.random() * maxX));
-  const randomY = Math.max(60, Math.floor(Math.random() * maxY));
+  const safeWidth = Math.min(window.innerWidth, document.documentElement.clientWidth);
+  const safeHeight = Math.min(window.innerHeight, document.documentElement.clientHeight);
 
-  // Change style to fixed to freely jump around screen
+  const minX = 18;
+  const maxX = Math.max(minX, safeWidth - rect.width - 18);
+  const minY = 90;  // Avoid top notch & music player
+  const maxY = Math.max(minY, safeHeight - rect.height - 90); // Avoid mobile bottom nav
+
+  let randomX = Math.floor(minX + Math.random() * (maxX - minX));
+  let randomY = Math.floor(minY + Math.random() * (maxY - minY));
+
+  // Ensure it doesn't overlap directly on top of the Yes button
+  let attempts = 0;
+  while (
+    attempts < 8 &&
+    Math.abs(randomX - yesRect.left) < 80 &&
+    Math.abs(randomY - yesRect.top) < 60
+  ) {
+    randomX = Math.floor(minX + Math.random() * (maxX - minX));
+    randomY = Math.floor(minY + Math.random() * (maxY - minY));
+    attempts++;
+  }
+
+  // Change style to fixed to safely jump around screen without disappearing
   btnNo.style.position = 'fixed';
   btnNo.style.left = `${randomX}px`;
   btnNo.style.top = `${randomY}px`;
   btnNo.style.zIndex = '9999';
 
-  // Show cute tooltip message
+  // Show cute tooltip message as a top notification bubble
   const msg = dodgeMessages[dodgeCount % dodgeMessages.length];
   dodgeBubble.textContent = msg;
   dodgeBubble.classList.add('show');
+  dodgeBubble.style.top = '72px';
+  dodgeBubble.style.left = '50%';
+  dodgeBubble.style.transform = 'translateX(-50%)';
 
   // Grow the Yes button slightly to encourage clicking
-  const yesScale = Math.min(1.35, 1 + dodgeCount * 0.05);
+  const yesScale = Math.min(1.26, 1 + dodgeCount * 0.04);
   btnYes.style.transform = `scale(${yesScale})`;
-
-  // Reposition tooltip bubble right below runaway button
-  dodgeBubble.style.position = 'fixed';
-  dodgeBubble.style.left = `${Math.min(window.innerWidth - 180, Math.max(20, randomX - 30))}px`;
-  dodgeBubble.style.top = `${randomY + 54}px`;
 }
 
 btnNo.addEventListener('mouseenter', dodgeNoButton);
