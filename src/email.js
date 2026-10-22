@@ -2,7 +2,7 @@ import emailjs from '@emailjs/browser';
 
 /**
  * Configuration for automated Love Confirmation Email
- * Recipient 1: hnguyen278279@gmail.com (Test)
+ * Recipient 1: hnguyen278279@gmail.com (Test email) / embuonkh@gmail.com (Bé Ngọc)
  * Recipient 2: xnguyen107204@gmail.com (Xuân Nguyên)
  */
 export const EMAIL_CONFIG = {
@@ -10,7 +10,7 @@ export const EMAIL_CONFIG = {
   templateId: 'template_fga4zmi',
   publicKey: '5dTeZA77uNsfQa5YE',
   
-  partnerEmail: 'hnguyen278279@gmail.com',
+  partnerEmail: 'hnguyen278279@gmail.com', // Đang để mail test theo yêu cầu của bạn
   myEmail: 'xnguyen107204@gmail.com',
 };
 
@@ -36,29 +36,21 @@ export function getFormattedCurrentTime() {
 export async function sendOfficialLoveEmail() {
   const timestamp = getFormattedCurrentTime();
 
+  // Concise, heartfelt vow message (NO DUPLICATION with template header)
+  const cleanMessage = `"Cảm ơn em đã bước vào cuộc đời anh. Anh hứa sẽ luôn trân trọng, yêu thương, lắng nghe và cùng em viết nên câu chuyện ngọt ngào của hai đứa mình. Giấy chứng nhận tình yêu này có giá trị vĩnh cửu! 🌹"`;
+
   const emailParams = {
     partner_email: EMAIL_CONFIG.partnerEmail,
     my_email: EMAIL_CONFIG.myEmail,
     to_email: `${EMAIL_CONFIG.partnerEmail}, ${EMAIL_CONFIG.myEmail}`,
     email: EMAIL_CONFIG.myEmail,
-    to_name: 'Bé Ngọc & Xuân Nguyên',
+    name: 'Xuân Nguyên',
     from_name: 'Xuân Nguyên ❤️',
     reply_to: EMAIL_CONFIG.myEmail,
     subject: `💌 [Chính Thức] Giấy Chứng Nhận Tình Yêu: Ngọc Đã Đồng Ý Làm Người Yêu Của Anh Rồi Nhé!`,
     timestamp: timestamp,
     time: timestamp,
-    message: `
-Chúc mừng Bé Ngọc & Anh đã chính thức nên duyên! 💖
------------------------------------------------------------
-Vào lúc: ${timestamp}
-Bé Ngọc (${EMAIL_CONFIG.partnerEmail}) đã bấm 'Đồng ý' làm người yêu của anh (${EMAIL_CONFIG.myEmail}).
-
-Lời nhắn gửi từ trái tim:
-"Cảm ơn em đã bước vào cuộc đời anh. Anh hứa sẽ luôn trân trọng, yêu thương, lắng nghe và cùng em viết nên câu chuyện của hai đứa mình."
-
-Giấy chứng nhận tình yêu này có giá trị vĩnh cửu! 🌹
------------------------------------------------------------
-    `,
+    message: cleanMessage,
   };
 
   try {

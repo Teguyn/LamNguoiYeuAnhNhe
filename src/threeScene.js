@@ -23,8 +23,9 @@ export class Romance3DScene {
   initCamera() {
     const width = window.innerWidth;
     const height = window.innerHeight;
-    this.camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
-    this.camera.position.z = 32;
+    this.camera = new THREE.PerspectiveCamera(58, width / height, 0.1, 1000);
+    // Bring camera closer so the 3D Heart is prominently visible
+    this.camera.position.z = 25;
   }
 
   initRenderer() {
@@ -38,35 +39,36 @@ export class Romance3DScene {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   }
 
-  // Create smooth radial gradient particle texture
-  getParticleTexture() {
+  // Create high-luminance glowing circular texture for heart particles
+  getHeartParticleTexture() {
     const canvas = document.createElement('canvas');
-    canvas.width = 64;
-    canvas.height = 64;
+    canvas.width = 128;
+    canvas.height = 128;
     const ctx = canvas.getContext('2d');
 
-    const gradient = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    const gradient = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
     gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
-    gradient.addColorStop(0.25, 'rgba(255, 120, 170, 0.9)');
-    gradient.addColorStop(0.6, 'rgba(255, 45, 96, 0.3)');
+    gradient.addColorStop(0.2, 'rgba(255, 140, 180, 0.95)');
+    gradient.addColorStop(0.5, 'rgba(255, 45, 96, 0.6)');
+    gradient.addColorStop(0.8, 'rgba(255, 20, 80, 0.15)');
     gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
     ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 64, 64);
+    ctx.fillRect(0, 0, 128, 128);
 
     return new THREE.CanvasTexture(canvas);
   }
 
   // Background starry universe
   createStarfield() {
-    const starCount = 2000;
+    const starCount = 2200;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(starCount * 3);
     const colors = new Float32Array(starCount * 3);
 
     const cWhite = new THREE.Color('#ffffff');
     const cRose = new THREE.Color('#ff85a1');
-    const cViolet = new THREE.Color('#c084fc');
+    const cViolet = new THREE.Color('#d8b4fe');
 
     for (let i = 0; i < starCount; i++) {
       positions[i * 3] = (Math.random() - 0.5) * 160;
@@ -84,11 +86,11 @@ export class Romance3DScene {
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     const material = new THREE.PointsMaterial({
-      size: 0.55,
+      size: 0.6,
       vertexColors: true,
       transparent: true,
-      opacity: 0.85,
-      map: this.getParticleTexture(),
+      opacity: 0.8,
+      map: this.getHeartParticleTexture(),
       blending: THREE.AdditiveBlending,
       depthWrite: false
     });
@@ -97,9 +99,9 @@ export class Romance3DScene {
     this.scene.add(this.stars);
   }
 
-  // Floating ambient stardust & fireflies
+  // Floating ambient stardust & warm candlelight fireflies
   createFireflies() {
-    const fireflyCount = 120;
+    const fireflyCount = 150;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(fireflyCount * 3);
     this.fireflySpeeds = [];
@@ -111,7 +113,7 @@ export class Romance3DScene {
 
       this.fireflySpeeds.push({
         x: (Math.random() - 0.5) * 0.02,
-        y: 0.01 + Math.random() * 0.02,
+        y: 0.015 + Math.random() * 0.025,
         phase: Math.random() * Math.PI * 2
       });
     }
@@ -119,12 +121,12 @@ export class Romance3DScene {
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
     const material = new THREE.PointsMaterial({
-      size: 1.1,
-      color: new THREE.Color('#ffd166'),
-      map: this.getParticleTexture(),
+      size: 1.3,
+      color: new THREE.Color('#ffeaa7'),
+      map: this.getHeartParticleTexture(),
       blending: THREE.AdditiveBlending,
       transparent: true,
-      opacity: 0.8,
+      opacity: 0.85,
       depthWrite: false
     });
 
@@ -132,48 +134,57 @@ export class Romance3DScene {
     this.scene.add(this.fireflies);
   }
 
-  // 3D Mathematical Parametric Heart with core & outer halo
+  // MAJESTIC 3D PARAMETRIC HEART (MUCH LARGER, BRIGHTER & GLOWING)
   create3DParticleHeart() {
-    const particleCount = 9500;
+    // 14,000 luminous particles for ultra-dense, vivid 3D heart
+    const particleCount = 14000;
     const geometry = new THREE.BufferGeometry();
     const positions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
     this.heartVelocities = new Float32Array(particleCount * 3);
 
-    const cCrimson = new THREE.Color('#ff1744');
-    const cRose = new THREE.Color('#ff4081');
-    const cGold = new THREE.Color('#ffeaa7');
+    const cRuby = new THREE.Color('#ff0055');
+    const cRoseNeon = new THREE.Color('#ff2d75');
+    const cBlush = new THREE.Color('#ff7597');
+    const cGoldHighlight = new THREE.Color('#fff2c2');
 
     for (let i = 0; i < particleCount; i++) {
       const t = Math.PI * 2 * Math.random();
       const u = Math.PI * (Math.random() - 0.5);
 
+      // Parametric formula for 3D Heart
       let x = 16 * Math.pow(Math.sin(t), 3);
       let y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
-      let z = u * 11 * Math.sin(t);
+      let z = u * 12 * Math.sin(t);
 
-      // Volume expansion & 3D curvature
-      const thickness = (Math.random() - 0.5) * 3.8;
+      // Rich volumetric dispersion & soft depth
+      const thickness = (Math.random() - 0.5) * 4.2;
       x += thickness * Math.sin(t);
       y += thickness * Math.cos(t);
-      z += thickness * 3.2;
+      z += thickness * 3.5;
 
-      // Fit gracefully into frame
-      const scale = 0.52;
+      // Scale enlarged to 0.74 so it visibly wraps and frames the viewport
+      const scale = 0.74;
       x *= scale;
       y *= scale;
       z *= scale;
 
       positions[i * 3] = x;
-      positions[i * 3 + 1] = y + 1.2;
-      positions[i * 3 + 2] = z;
+      // Positioned slightly higher so upper lobes rise above and frame content
+      positions[i * 3 + 1] = y + 2.2;
+      positions[i * 3 + 2] = z - 2;
 
       this.heartVelocities[i * 3] = (Math.random() - 0.5) * 0.45;
       this.heartVelocities[i * 3 + 1] = (Math.random() - 0.5) * 0.45;
       this.heartVelocities[i * 3 + 2] = (Math.random() - 0.5) * 0.45;
 
       const ratio = Math.random();
-      const col = ratio > 0.8 ? cGold : (ratio > 0.4 ? cCrimson : cRose);
+      let col;
+      if (ratio > 0.85) col = cGoldHighlight;
+      else if (ratio > 0.5) col = cRoseNeon;
+      else if (ratio > 0.2) col = cRuby;
+      else col = cBlush;
+
       colors[i * 3] = col.r;
       colors[i * 3 + 1] = col.g;
       colors[i * 3 + 2] = col.b;
@@ -183,12 +194,12 @@ export class Romance3DScene {
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     const material = new THREE.PointsMaterial({
-      size: 0.95,
+      size: 1.25, // Larger, more brilliant particle points
       vertexColors: true,
-      map: this.getParticleTexture(),
+      map: this.getHeartParticleTexture(),
       blending: THREE.AdditiveBlending,
       transparent: true,
-      opacity: 0.92,
+      opacity: 0.98,
       depthWrite: false
     });
 
@@ -201,7 +212,6 @@ export class Romance3DScene {
     this.petalMeshes = [];
     this.petalGroup = new THREE.Group();
 
-    // Create an organic curved rose petal geometry
     const petalShape = new THREE.Shape();
     petalShape.moveTo(0, -0.6);
     petalShape.bezierCurveTo(0.5, -0.3, 0.7, 0.4, 0, 0.8);
@@ -209,12 +219,10 @@ export class Romance3DScene {
 
     const baseGeometry = new THREE.ShapeGeometry(petalShape, 12);
 
-    // Curve the petal vertices so it's not flat
     const pos = baseGeometry.attributes.position;
     for (let i = 0; i < pos.count; i++) {
       const px = pos.getX(i);
       const py = pos.getY(i);
-      // Gentle spoon cup curve
       const pz = -Math.sin(Math.abs(px) * 2) * 0.25 + (py * py) * 0.12;
       pos.setZ(i, pz);
     }
@@ -227,7 +235,7 @@ export class Romance3DScene {
       '#fda4af'  // Tender pink highlight
     ];
 
-    const petalCount = 45;
+    const petalCount = 50;
 
     for (let i = 0; i < petalCount; i++) {
       const color = petalColors[i % petalColors.length];
@@ -235,32 +243,28 @@ export class Romance3DScene {
         color: new THREE.Color(color),
         side: THREE.DoubleSide,
         transparent: true,
-        opacity: 0.75 + Math.random() * 0.2
+        opacity: 0.8 + Math.random() * 0.2
       });
 
       const mesh = new THREE.Mesh(baseGeometry, material);
 
-      // Random initial position spread
       mesh.position.set(
         (Math.random() - 0.5) * 45,
         (Math.random() - 0.5) * 45,
         (Math.random() - 0.5) * 25
       );
 
-      // Random scale for natural variance
-      const scale = 0.7 + Math.random() * 0.8;
+      const scale = 0.75 + Math.random() * 0.8;
       mesh.scale.set(scale, scale, scale);
 
-      // Random rotation
       mesh.rotation.set(
         Math.random() * Math.PI,
         Math.random() * Math.PI,
         Math.random() * Math.PI
       );
 
-      // Custom velocity & rotational tumbling speeds
       mesh.userData = {
-        fallSpeed: 0.03 + Math.random() * 0.04,
+        fallSpeed: 0.028 + Math.random() * 0.038,
         driftSpeedX: (Math.random() - 0.5) * 0.015,
         driftSpeedZ: (Math.random() - 0.5) * 0.015,
         rotSpeedX: (Math.random() - 0.5) * 0.025,
@@ -302,17 +306,14 @@ export class Romance3DScene {
 
     const elapsedTime = this.clock.getElapsedTime();
 
-    // Mouse parallax smoothing
     this.mouse.x += (this.mouse.targetX - this.mouse.x) * 0.05;
     this.mouse.y += (this.mouse.targetY - this.mouse.y) * 0.05;
 
-    // Stars gentle motion
     if (this.stars) {
-      this.stars.rotation.y = elapsedTime * 0.025;
-      this.stars.rotation.x = this.mouse.y * 0.06;
+      this.stars.rotation.y = elapsedTime * 0.02;
+      this.stars.rotation.x = this.mouse.y * 0.05;
     }
 
-    // Fireflies floating
     if (this.fireflies) {
       const positions = this.fireflies.geometry.attributes.position.array;
       for (let i = 0; i < this.fireflySpeeds.length; i++) {
@@ -328,11 +329,11 @@ export class Romance3DScene {
       this.fireflies.geometry.attributes.position.needsUpdate = true;
     }
 
-    // 3D Heart pulsation
+    // 3D Heart realistic pulsation & interactive rotation
     if (this.heart) {
       if (this.heartState === 'normal') {
         const t = elapsedTime * 3.4;
-        const beat = Math.sin(t) * 0.08 + Math.sin(t * 2) * 0.035;
+        const beat = Math.sin(t) * 0.085 + Math.sin(t * 2) * 0.04;
         const scale = 1 + Math.max(0, beat);
         this.heart.scale.set(scale, scale, scale);
 
@@ -351,25 +352,20 @@ export class Romance3DScene {
       }
     }
 
-    // 3D Rose Petals Falling & Tumbling with Wind
+    // 3D Rose Petals Falling & Tumbling
     if (this.petalMeshes) {
       for (let i = 0; i < this.petalMeshes.length; i++) {
         const petal = this.petalMeshes[i];
         const data = petal.userData;
 
-        // Falling down
         petal.position.y -= data.fallSpeed;
-
-        // Gentle organic wind drift
         petal.position.x += Math.sin(elapsedTime * data.oscillationSpeed + data.phase) * 0.03 + data.driftSpeedX;
         petal.position.z += Math.cos(elapsedTime * data.oscillationSpeed + data.phase) * 0.02 + data.driftSpeedZ;
 
-        // 3D tumbling rotation
         petal.rotation.x += data.rotSpeedX;
         petal.rotation.y += data.rotSpeedY;
         petal.rotation.z += data.rotSpeedZ;
 
-        // Reset to top when fallen off screen
         if (petal.position.y < -22) {
           petal.position.y = 24;
           petal.position.x = (Math.random() - 0.5) * 45;
