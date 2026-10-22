@@ -41,6 +41,8 @@ const timerHours  = document.getElementById('timer-hours');
 const timerMins   = document.getElementById('timer-mins');
 const timerSecs   = document.getElementById('timer-secs');
 
+const LOVE_START_KEY = 'ngoc_love_start_ts';
+
 let storyIndex    = 0;
 let dodgeCount    = 0;
 let loveStartTime = null;
@@ -56,6 +58,36 @@ const dodgeMessages = [
   'Bé Ngọc bấm nhầm nút rồi kìa! 🥰',
   'Dạ em đồng ý đi mà, năn nỉ đó nha ❤️',
 ];
+
+// ======================================================
+// 0b. RESTORE SESSION — jump to celebration if already said YES
+// ======================================================
+(function restoreSession() {
+  const saved = localStorage.getItem(LOVE_START_KEY);
+  if (!saved) return;
+
+  const ts = parseInt(saved, 10);
+  if (isNaN(ts)) return;
+
+  // Hide all scenes, show celebration directly
+  document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+  sceneCelebration.classList.add('active');
+
+  // Update email card to show already-confirmed state
+  emailStatusCard.classList.add('success');
+  emailStatusTitle.textContent = '✨ Tình yêu đã được chứng nhận!';
+  emailStatusDesc.innerHTML = `
+    Thư xác nhận đã được gửi tới <strong>${EMAIL_CONFIG.partnerEmail}</strong>
+    và <strong>${EMAIL_CONFIG.myEmail}</strong> kể từ khi em đồng ý.
+    <br><span style="color:rgba(255,192,203,0.8);font-size:0.75rem;">
+      (Tải lại trang không xoá được ký ức này 💕)
+    </span>
+  `;
+
+  // Start timer from the original timestamp
+  loveStartTime = ts;
+  startLoveTimer();
+})();
 
 // ======================================================
 // 0. FLOATING PETALS
@@ -224,6 +256,7 @@ btnYes.addEventListener('click', async () => {
       sceneCelebration.classList.add('active');
 
       loveStartTime = Date.now();
+      localStorage.setItem(LOVE_START_KEY, String(loveStartTime));
       startLoveTimer();
     },
   });
