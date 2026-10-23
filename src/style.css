@@ -602,7 +602,7 @@ body {
   flex-direction: column;
   align-items: center;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 /* Subtle top glow inside card */
@@ -658,24 +658,38 @@ body {
 .proposal-lead {
   display: block;
   font-family: var(--font-script);
-  font-size: 2.8rem;
-  color: var(--rose-pale);
-  line-height: 1.1;
-  margin-bottom: 4px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+  font-size: 3.6rem;
+  color: #fffafc;
+  line-height: 0.9;
+  margin-bottom: 8px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-shadow:
+    0 0 8px rgba(255, 226, 236, 0.95),
+    0 1px 0 rgba(72, 0, 28, 0.6),
+    0 2px 12px rgba(84, 0, 32, 0.8),
+    0 6px 18px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(255, 115, 160, 0.25);
+  -webkit-text-stroke: 0.5px rgba(117, 16, 46, 0.9);
 }
 
 .proposal-question {
-  font-family: var(--font-display);
-  font-size: clamp(2.2rem, 6vw, 3.4rem);
-  font-weight: 800;
-  line-height: 1.15;
-  color: var(--white);
-  letter-spacing: -0.5px;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: clamp(3.2rem, 7.4vw, 5rem);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: 0.02em;
+  color: #fff0f5;
+  background: linear-gradient(135deg, #fff8fb 0%, #ffdce8 18%, #ff9bbd 40%, #ff5d96 60%, #ffdfe9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
   text-shadow:
-    0 2px 20px rgba(0, 0, 0, 0.9),
-    0 0 30px rgba(255, 45, 96, 0.6),
-    0 0 60px rgba(255, 117, 140, 0.3);
+    0 0 10px rgba(255, 175, 206, 0.72),
+    0 0 22px rgba(255, 122, 170, 0.7),
+    0 0 38px rgba(255, 95, 160, 0.42),
+    0 4px 18px rgba(99, 18, 42, 0.46);
+  filter: drop-shadow(0 0 10px rgba(255, 120, 160, 0.45));
 }
 
 .proposal-quote {
@@ -693,13 +707,14 @@ body {
 /* ==================== PROPOSAL BUTTONS ==================== */
 .proposal-actions {
   position: relative;
+  overflow: visible;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
   width: 100%;
-  /* Fixed height so btn-no can float inside without shifting layout */
-  min-height: 120px;
+  min-height: 190px;
+  padding: 18px 8px 22px;
 }
 
 /* YES BUTTON */
@@ -778,25 +793,44 @@ body {
   left: 50%;
   transform: translateX(-50%);
   padding: 11px 24px;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 156, 193, 0.18));
+  border: 1px solid rgba(255, 179, 211, 0.4);
   border-radius: 999px;
-  color: var(--lilac);
+  color: #ffe5f0;
   cursor: pointer;
   font-family: var(--font-body);
   font-size: 0.9rem;
-  font-weight: 500;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  font-weight: 700;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 6px 24px rgba(255, 118, 140, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
   transition: all 0.2s var(--ease-out);
   white-space: nowrap;
   z-index: 5;
+  animation: dodgePulse 1.3s ease-in-out infinite alternate;
+}
+
+@media (max-width: 430px) {
+  .btn-no {
+    padding: 10px 18px;
+    font-size: 0.78rem;
+  }
 }
 
 .btn-no:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.35);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 175, 205, 0.22));
+  border-color: rgba(255, 208, 228, 0.6);
+  box-shadow: 0 10px 28px rgba(255, 118, 140, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+@keyframes dodgePulse {
+  0% {
+    box-shadow: 0 6px 22px rgba(255, 118, 140, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  }
+
+  100% {
+    box-shadow: 0 10px 30px rgba(255, 118, 140, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.32);
+  }
 }
 
 /* DODGE BUBBLE — floats inside the card above buttons */

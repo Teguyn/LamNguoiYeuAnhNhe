@@ -57,6 +57,11 @@ const dodgeMessages = [
   'Không cho Ngọc từ chối đâu nà! 🏃💨',
   'Bé Ngọc bấm nhầm nút rồi kìa! 🥰',
   'Dạ em đồng ý đi mà, năn nỉ đó nha ❤️',
+  'Đừng làm anh buồn mà 😭',
+  'Nút này đang chạy trốn vì biết em thích anh quá rồi 😌',
+  'Chọn nút đỏ đi em ơi, anh đang cười rồi đó 💖',
+  'Em cười rồi thì hãy bấm nút hồng đi thôi 🩷',
+  'Ngọc ơi, anh đã làm bánh, còn gì nữa đâu? 😅',
 ];
 
 // ======================================================
@@ -186,56 +191,90 @@ btnNextStory.addEventListener('click', () => {
 // ======================================================
 // 4. SCENE 3: NO BUTTON — Jumps inside the actions box
 // ======================================================
+function showDodgeBubble() {
+  const msg = dodgeMessages[dodgeCount % dodgeMessages.length];
+  dodgeBubble.textContent = msg;
+  dodgeBubble.classList.remove('show');
+  void dodgeBubble.offsetWidth;
+  dodgeBubble.classList.add('show');
+
+  clearTimeout(dodgeBubble._timer);
+  dodgeBubble._timer = setTimeout(() => dodgeBubble.classList.remove('show'), 2200);
+}
+
 function dodgeNoButton(e) {
   if (e) e.preventDefault();
   audioEngine.playWhooshSound();
   dodgeCount++;
 
-  // Get the bounding box of the actions container
   const areaRect = proposalActions.getBoundingClientRect();
   const btnRect = btnNo.getBoundingClientRect();
   const yesRect = btnYes.getBoundingClientRect();
 
-  const padding = 10;
-  const maxX = areaRect.width - btnRect.width - padding;
-  const maxY = areaRect.height - btnRect.height - padding;
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
+  const padding = 12;
+  const minX = padding;
+  const minY = padding;
+  const maxX = Math.max(minX, areaRect.width - btnRect.width - padding);
+  const maxY = Math.max(minY, areaRect.height - btnRect.height - padding);
 
-  let newX, newY;
+  const yesCenterX = yesRect.left - areaRect.left + yesRect.width / 2;
+  const yesCenterY = yesRect.top - areaRect.top + yesRect.height / 2;
+  const noCenterX = btnRect.left - areaRect.left + btnRect.width / 2;
+  const noCenterY = btnRect.top - areaRect.top + btnRect.height / 2;
+
+  const clickX = e ? (e.clientX - areaRect.left) : noCenterX;
+  const clickY = e ? (e.clientY - areaRect.top) : noCenterY;
+
+  let dx = noCenterX - clickX;
+  let dy = noCenterY - clickY;
+
+  if (Math.hypot(dx, dy) < 12) {
+    dx = yesCenterX - clickX;
+    dy = yesCenterY - clickY;
+  }
+
+  const length = Math.max(1, Math.hypot(dx, dy));
+  const dirX = dx / length;
+  const dirY = dy / length;
+
+  let newX = noCenterX;
+  let newY = noCenterY;
   let attempts = 0;
 
   do {
-    newX = padding + Math.random() * Math.max(0, maxX - padding);
-    newY = padding + Math.random() * Math.max(0, maxY - padding);
+    const moveX = 80 + Math.random() * 110 + dodgeCount * 12;
+    const moveY = 70 + Math.random() * 100 + dodgeCount * 10;
+    const candidateX = noCenterX + dirX * moveX + (Math.random() - 0.5) * 40;
+    const candidateY = noCenterY + dirY * moveY + (Math.random() - 0.5) * 40;
+
+    newX = clamp(candidateX - btnRect.width / 2, minX, maxX);
+    newY = clamp(candidateY - btnRect.height / 2, minY, maxY);
     attempts++;
   } while (
-    attempts < 10 &&
-    Math.abs(newX - (yesRect.left - areaRect.left)) < 80 &&
-    Math.abs(newY - (yesRect.top - areaRect.top)) < 60
+    attempts < 20 &&
+    Math.hypot(newX + btnRect.width / 2 - yesCenterX, newY + btnRect.height / 2 - yesCenterY) < 130
   );
 
-  // Switch to absolute inside proposal-actions for safe containment
   btnNo.style.position = 'absolute';
-  btnNo.style.transform = 'none';
   btnNo.style.left = `${newX}px`;
   btnNo.style.top = `${newY}px`;
   btnNo.style.bottom = 'auto';
+  btnNo.style.right = 'auto';
+  btnNo.style.transform = `rotate(${(Math.random() - 0.5) * 12}deg) scale(${1 + Math.random() * 0.08})`;
+  btnNo.style.transition = 'left 0.18s ease, top 0.18s ease, transform 0.18s ease, background 0.2s ease, box-shadow 0.2s ease';
+  btnNo.style.zIndex = '20';
 
-  // Show dodge bubble message
-  const msg = dodgeMessages[dodgeCount % dodgeMessages.length];
-  dodgeBubble.textContent = msg;
-  dodgeBubble.classList.add('show');
+  showDodgeBubble();
 
-  // Auto-hide bubble after 2s
-  clearTimeout(dodgeBubble._timer);
-  dodgeBubble._timer = setTimeout(() => dodgeBubble.classList.remove('show'), 2200);
-
-  // Grow the Yes button slightly each time she tries No
-  const scale = Math.min(1.22, 1 + dodgeCount * 0.04);
-  gsap.to(btnYes, { scale, duration: 0.3, ease: 'back.out(2)' });
+  const scale = Math.min(1.28, 1 + dodgeCount * 0.045);
+  gsap.to(btnYes, { scale, duration: 0.25, ease: 'back.out(2)' });
 }
 
 btnNo.addEventListener('mouseenter', dodgeNoButton);
+btnNo.addEventListener('pointerenter', dodgeNoButton);
 btnNo.addEventListener('touchstart', dodgeNoButton, { passive: false });
+btnNo.addEventListener('pointerdown', dodgeNoButton, { passive: false });
 btnNo.addEventListener('click', dodgeNoButton);
 
 // ======================================================

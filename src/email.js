@@ -5,7 +5,7 @@ export const EMAIL_CONFIG = {
   templateId: 'template_fga4zmi',
   publicKey: '5dTeZA77uNsfQa5YE',
 
-  partnerEmail: 'hnguyen278279', // test mail — đổi lại embuonkh@gmail.com khi dùng thật
+  partnerEmail: 'hnguyen278279@gmail.com', // test mail — đổi lại embuonkh@gmail.com khi dùng thật
   myEmail: 'xnguyen107204@gmail.com',
 };
 
@@ -226,11 +226,11 @@ function buildLoveCertificateHTML(timestamp) {
       </div>
       <div class="info-row">
         <span class="info-label">Người gửi</span>
-        <span class="info-value">Xuân Nguyên (xnguyen107204@gmail.com)</span>
+        <span class="info-value"> Xuân Nguyên (xnguyen107204@gmail.com)</span>
       </div>
       <div class="info-row">
         <span class="info-label">Người nhận</span>
-        <span class="info-value">Bé Ngọc (${EMAIL_CONFIG.partnerEmail})</span>
+        <span class="info-value"> Bé Ngọc (${EMAIL_CONFIG.partnerEmail})</span>
       </div>
       <div class="info-row">
         <span class="info-label">Trạng thái</span>
@@ -238,7 +238,7 @@ function buildLoveCertificateHTML(timestamp) {
       </div>
       <div class="info-row">
         <span class="info-label">Hiệu lực</span>
-        <span class="info-value" style="color:#fcd34d"> Mãi mãi và vĩnh cửu 💍</span>
+        <span class="info-value" style="color:#fcd34d">  Mãi mãi và vĩnh cửu 💍</span>
       </div>
     </div>
 
