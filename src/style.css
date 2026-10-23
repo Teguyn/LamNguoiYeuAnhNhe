@@ -15,11 +15,11 @@
   --cream: #fff5f8;
   --lilac: #e8d5f5;
 
-  /* Safe area for iPhone Dynamic Island / notch */
-  --safe-top: max(20px, env(safe-area-inset-top));
-  --safe-right: max(12px, env(safe-area-inset-right));
-  --safe-bottom: max(12px, env(safe-area-inset-bottom));
-  --safe-left: max(12px, env(safe-area-inset-left));
+  /* Safe area keeps a softer full-bleed layout on iPhone with Dynamic Island */
+  --safe-top: env(safe-area-inset-top);
+  --safe-right: env(safe-area-inset-right);
+  --safe-bottom: env(safe-area-inset-bottom);
+  --safe-left: env(safe-area-inset-left);
 
   /* Glass Cards */
   --glass-bg: rgba(255, 255, 255, 0.06);
@@ -112,8 +112,8 @@ body {
 /* ==================== MUSIC CONTROLLER ==================== */
 .music-controller {
   position: fixed;
-  top: calc(18px + env(safe-area-inset-top));
-  right: calc(18px + env(safe-area-inset-right));
+  top: max(10px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
   z-index: 200;
   display: flex;
   align-items: center;
@@ -218,10 +218,7 @@ body {
   width: 100vw;
   height: 100dvh;
   min-height: 100dvh;
-  padding-top: env(safe-area-inset-top);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-  padding-bottom: env(safe-area-inset-bottom);
+  padding: 0;
   z-index: 10;
   overflow: hidden;
 }
@@ -232,13 +229,14 @@ body {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: calc(28px + env(safe-area-inset-top)) 20px calc(52px + env(safe-area-inset-bottom));
+  padding: 0 20px 52px;
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
   transition: opacity 0.9s var(--ease-smooth), visibility 0.9s;
   overflow-y: auto;
   scrollbar-width: none;
+  scroll-padding-top: 0;
 }
 
 .scene::-webkit-scrollbar {
@@ -601,13 +599,13 @@ body {
 
 .proposal-card {
   width: 100%;
-  padding: 32px 28px 28px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 28px;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: var(--glass-shadow), 0 0 50px rgba(255, 45, 96, 0.18);
+  padding: 0 20px 24px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+  border: 1px solid rgba(255, 192, 203, 0.18);
+  border-radius: 0;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: none;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -615,8 +613,8 @@ body {
   position: relative;
   overflow: visible;
   isolation: isolate;
-  margin-top: 6px;
-  margin-bottom: 6px;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 
@@ -625,9 +623,8 @@ body {
   content: '';
   position: absolute;
   top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80%;
+  left: 0;
+  width: 100%;
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(255, 117, 140, 0.8), transparent);
 }
@@ -667,6 +664,7 @@ body {
 }
 
 .proposal-title-wrap {
+  margin-top: 4px;
   margin-bottom: 16px;
 }
 
