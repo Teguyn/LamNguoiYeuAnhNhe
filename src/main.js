@@ -211,65 +211,66 @@ function dodgeNoButton(e) {
   const btnRect = btnNo.getBoundingClientRect();
   const yesRect = btnYes.getBoundingClientRect();
 
-  const margin = 14;
+  const margin = 12;
+  const buttonWidth = Math.max(120, btnRect.width || 128);
+  const buttonHeight = Math.max(38, btnRect.height || 42);
   const xMin = margin;
   const yMin = margin;
-  const xMax = Math.max(xMin, areaRect.width - btnRect.width - margin);
-  const yMax = Math.max(yMin, areaRect.height - btnRect.height - margin);
+  const xMax = Math.max(xMin, areaRect.width - buttonWidth - margin);
+  const yMax = Math.max(yMin, areaRect.height - buttonHeight - margin);
 
   const yesCenterX = yesRect.left - areaRect.left + yesRect.width / 2;
   const yesCenterY = yesRect.top - areaRect.top + yesRect.height / 2;
-  const clickX = e ? e.clientX - areaRect.left : yesCenterX + 90;
-  const clickY = e ? e.clientY - areaRect.top : yesCenterY + 90;
+  const clickX = e ? e.clientX - areaRect.left : areaRect.width * 0.82;
+  const clickY = e ? e.clientY - areaRect.top : areaRect.height * 0.18;
 
-  const candidates = [
-    { x: xMin, y: yMin },
-    { x: xMax, y: yMin },
-    { x: xMin, y: yMax },
-    { x: xMax, y: yMax },
-    { x: (areaRect.width - btnRect.width) / 2, y: yMin },
-    { x: (areaRect.width - btnRect.width) / 2, y: yMax },
-    { x: xMin, y: (areaRect.height - btnRect.height) / 2 },
-    { x: xMax, y: (areaRect.height - btnRect.height) / 2 },
-  ];
+  const candidates = [];
+  const stepX = 24;
+  const stepY = 20;
 
-  let best = null;
+  for (let x = xMin; x <= xMax; x += stepX) {
+    for (let y = yMin; y <= yMax; y += stepY) {
+      const centerX = x + buttonWidth / 2;
+      const centerY = y + buttonHeight / 2;
+      const distanceFromClick = Math.hypot(centerX - clickX, centerY - clickY);
+      const distanceFromYes = Math.hypot(centerX - yesCenterX, centerY - yesCenterY);
 
-  for (const candidate of candidates) {
-    const centerX = candidate.x + btnRect.width / 2;
-    const centerY = candidate.y + btnRect.height / 2;
-    const distanceFromClick = Math.hypot(centerX - clickX, centerY - clickY);
-    const distanceFromYes = Math.hypot(centerX - yesCenterX, centerY - yesCenterY);
+      if (distanceFromYes < 95) continue;
 
-    if (distanceFromYes < 80) continue;
-
-    const score = distanceFromClick + distanceFromYes * 0.9;
-    if (!best || score > best.score) {
-      best = { ...candidate, score };
+      candidates.push({
+        x,
+        y,
+        score: distanceFromClick + distanceFromYes * 0.9 + Math.random() * 25,
+      });
     }
   }
 
+  let best = candidates.sort((a, b) => b.score - a.score)[0];
+
   if (!best) {
     best = {
-      x: Math.min(xMax, Math.max(xMin, areaRect.width - btnRect.width - margin)),
+      x: Math.min(xMax, Math.max(xMin, areaRect.width - buttonWidth - margin)),
       y: Math.min(yMax, Math.max(yMin, margin)),
       score: 0,
     };
   }
+
+  const rotate = ((Math.random() - 0.5) * 18).toFixed(1);
+  const scale = (0.96 + Math.random() * 0.14).toFixed(2);
 
   btnNo.style.position = 'absolute';
   btnNo.style.left = `${best.x}px`;
   btnNo.style.top = `${best.y}px`;
   btnNo.style.bottom = 'auto';
   btnNo.style.right = 'auto';
-  btnNo.style.transform = 'none';
-  btnNo.style.transition = 'left 0.16s ease, top 0.16s ease, transform 0.16s ease';
+  btnNo.style.transform = `rotate(${rotate}deg) scale(${scale})`;
+  btnNo.style.transition = 'left 0.18s cubic-bezier(0.2, 0.9, 0.2, 1), top 0.18s cubic-bezier(0.2, 0.9, 0.2, 1), transform 0.18s ease';
   btnNo.style.zIndex = '60';
 
   showDodgeBubble();
 
-  const scale = Math.min(1.28, 1 + dodgeCount * 0.045);
-  gsap.to(btnYes, { scale, duration: 0.25, ease: 'back.out(2)' });
+  const scaleYes = Math.min(1.28, 1 + dodgeCount * 0.045);
+  gsap.to(btnYes, { scale: scaleYes, duration: 0.25, ease: 'back.out(2)' });
 }
 
 btnNo.addEventListener('touchstart', dodgeNoButton, { passive: false });
