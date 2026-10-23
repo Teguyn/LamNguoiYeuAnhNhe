@@ -15,6 +15,12 @@
   --cream: #fff5f8;
   --lilac: #e8d5f5;
 
+  /* Safe area for iPhone Dynamic Island / notch */
+  --safe-top: max(20px, env(safe-area-inset-top));
+  --safe-right: max(12px, env(safe-area-inset-right));
+  --safe-bottom: max(12px, env(safe-area-inset-bottom));
+  --safe-left: max(12px, env(safe-area-inset-left));
+
   /* Glass Cards */
   --glass-bg: rgba(255, 255, 255, 0.06);
   --glass-border: rgba(255, 192, 203, 0.2);
@@ -106,8 +112,8 @@ body {
 /* ==================== MUSIC CONTROLLER ==================== */
 .music-controller {
   position: fixed;
-  top: 18px;
-  right: 18px;
+  top: calc(18px + env(safe-area-inset-top));
+  right: calc(18px + env(safe-area-inset-right));
   z-index: 200;
   display: flex;
   align-items: center;
@@ -211,6 +217,11 @@ body {
   position: relative;
   width: 100vw;
   height: 100dvh;
+  min-height: 100dvh;
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
   z-index: 10;
   overflow: hidden;
 }
@@ -219,9 +230,9 @@ body {
   position: absolute;
   inset: 0;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 20px 20px 30px;
+  padding: calc(28px + env(safe-area-inset-top)) 20px calc(52px + env(safe-area-inset-bottom));
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
@@ -604,6 +615,8 @@ body {
   position: relative;
   overflow: visible;
   isolation: isolate;
+  margin-top: 6px;
+  margin-bottom: 6px;
 }
 
 
@@ -702,8 +715,35 @@ body {
   color: var(--cream);
   font-style: italic;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
-  margin-bottom: 26px;
+  margin-top: 0;
+  margin-bottom: 20px;
   max-width: 460px;
+}
+
+.quote-small {
+  font-size: 0.98rem;
+  line-height: 1.7;
+  opacity: 0.9;
+  margin-bottom: 12px;
+}
+
+.proposal-question {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: clamp(2.2rem, 5.4vw, 3.4rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: 0.02em;
+  color: #fff0f5;
+  background: linear-gradient(135deg, #fff8fb 0%, #ffdce8 18%, #ff9bbd 40%, #ff5d96 60%, #ffdfe9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow:
+    0 0 10px rgba(255, 175, 206, 0.72),
+    0 0 22px rgba(255, 122, 170, 0.7),
+    0 0 38px rgba(255, 95, 160, 0.42),
+    0 4px 18px rgba(99, 18, 42, 0.46);
+  filter: drop-shadow(0 0 10px rgba(255, 120, 160, 0.45));
 }
 
 /* ==================== PROPOSAL BUTTONS ==================== */
@@ -716,7 +756,8 @@ body {
   gap: 12px;
   width: 100%;
   min-height: 190px;
-  padding: 18px 8px 22px;
+  padding: 18px 8px 0;
+  margin-bottom: 8px;
 }
 
 /* YES BUTTON */
@@ -812,6 +853,7 @@ body {
   animation: dodgePulse 1.3s ease-in-out infinite alternate;
   pointer-events: auto;
   touch-action: manipulation;
+  overscroll-behavior: contain;
   will-change: left, top, transform;
 }
 

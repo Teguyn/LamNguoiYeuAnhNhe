@@ -211,9 +211,9 @@ function dodgeNoButton(e) {
   const btnRect = btnNo.getBoundingClientRect();
   const yesRect = btnYes.getBoundingClientRect();
 
-  const margin = 12;
+  const margin = 10;
   const buttonWidth = Math.max(120, btnRect.width || 128);
-  const buttonHeight = Math.max(38, btnRect.height || 42);
+  const buttonHeight = Math.max(40, btnRect.height || 42);
   const xMin = margin;
   const yMin = margin;
   const xMax = Math.max(xMin, areaRect.width - buttonWidth - margin);
@@ -221,12 +221,12 @@ function dodgeNoButton(e) {
 
   const yesCenterX = yesRect.left - areaRect.left + yesRect.width / 2;
   const yesCenterY = yesRect.top - areaRect.top + yesRect.height / 2;
-  const clickX = e ? e.clientX - areaRect.left : areaRect.width * 0.82;
-  const clickY = e ? e.clientY - areaRect.top : areaRect.height * 0.18;
+  const clickX = e ? e.clientX - areaRect.left : areaRect.width * 0.8;
+  const clickY = e ? e.clientY - areaRect.top : areaRect.height * 0.2;
 
   const candidates = [];
-  const stepX = 24;
-  const stepY = 20;
+  const stepX = 16;
+  const stepY = 16;
 
   for (let x = xMin; x <= xMax; x += stepX) {
     for (let y = yMin; y <= yMax; y += stepY) {
@@ -235,28 +235,27 @@ function dodgeNoButton(e) {
       const distanceFromClick = Math.hypot(centerX - clickX, centerY - clickY);
       const distanceFromYes = Math.hypot(centerX - yesCenterX, centerY - yesCenterY);
 
-      if (distanceFromYes < 95) continue;
+      if (distanceFromYes < 100) continue;
 
-      candidates.push({
-        x,
-        y,
-        score: distanceFromClick + distanceFromYes * 0.9 + Math.random() * 25,
-      });
+      const pushAwayX = centerX > clickX ? 1 : -1;
+      const pushAwayY = centerY > clickY ? 1 : -1;
+      const directionalBias = (Math.abs(centerX - clickX) * 0.8 + Math.abs(centerY - clickY) * 0.8) * (1 + dodgeCount * 0.08);
+      const score = distanceFromClick * 1.6 + distanceFromYes * 0.9 + directionalBias + pushAwayX * 10 + pushAwayY * 10 + Math.random() * 20;
+
+      candidates.push({ x, y, score });
     }
   }
 
   let best = candidates.sort((a, b) => b.score - a.score)[0];
 
   if (!best) {
-    best = {
-      x: Math.min(xMax, Math.max(xMin, areaRect.width - buttonWidth - margin)),
-      y: Math.min(yMax, Math.max(yMin, margin)),
-      score: 0,
-    };
+    const fallbackX = Math.min(xMax, Math.max(xMin, areaRect.width * 0.7 - buttonWidth / 2));
+    const fallbackY = Math.min(yMax, Math.max(yMin, areaRect.height * 0.25));
+    best = { x: fallbackX, y: fallbackY, score: 0 };
   }
 
-  const rotate = ((Math.random() - 0.5) * 18).toFixed(1);
-  const scale = (0.96 + Math.random() * 0.14).toFixed(2);
+  const rotate = ((Math.random() - 0.5) * 26).toFixed(1);
+  const scale = (0.92 + Math.random() * 0.18).toFixed(2);
 
   btnNo.style.position = 'absolute';
   btnNo.style.left = `${best.x}px`;
@@ -264,12 +263,12 @@ function dodgeNoButton(e) {
   btnNo.style.bottom = 'auto';
   btnNo.style.right = 'auto';
   btnNo.style.transform = `rotate(${rotate}deg) scale(${scale})`;
-  btnNo.style.transition = 'left 0.18s cubic-bezier(0.2, 0.9, 0.2, 1), top 0.18s cubic-bezier(0.2, 0.9, 0.2, 1), transform 0.18s ease';
+  btnNo.style.transition = 'left 0.18s cubic-bezier(0.24, 1, 0.25, 1), top 0.18s cubic-bezier(0.24, 1, 0.25, 1), transform 0.18s ease';
   btnNo.style.zIndex = '60';
 
   showDodgeBubble();
 
-  const scaleYes = Math.min(1.28, 1 + dodgeCount * 0.045);
+  const scaleYes = Math.min(1.28, 1 + dodgeCount * 0.05);
   gsap.to(btnYes, { scale: scaleYes, duration: 0.25, ease: 'back.out(2)' });
 }
 
