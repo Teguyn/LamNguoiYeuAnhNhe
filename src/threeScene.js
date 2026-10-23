@@ -1,4 +1,6 @@
 import * as THREE from 'three';
+import portraitImage1 from './assets/IMG_7030.jpeg';
+import portraitImage2 from './assets/IMG_7006.jpeg';
 
 export class Romance3DScene {
   constructor(canvasElement) {
@@ -14,6 +16,7 @@ export class Romance3DScene {
     this.initRenderer();
     this.createStarfield();
     this.createFireflies();
+    this.createPortraitCard();
     this.create3DParticleHeart();
     this.create3DRosePetals();
     this.bindEvents();
@@ -132,6 +135,77 @@ export class Romance3DScene {
 
     this.fireflies = new THREE.Points(geometry, material);
     this.scene.add(this.fireflies);
+  }
+
+  createPortraitCard() {
+    const textureLoader = new THREE.TextureLoader();
+    const texture1 = textureLoader.load(portraitImage1);
+    const texture2 = textureLoader.load(portraitImage2);
+    texture1.colorSpace = THREE.SRGBColorSpace;
+    texture2.colorSpace = THREE.SRGBColorSpace;
+
+    const group = new THREE.Group();
+
+    const glow = new THREE.Mesh(
+      new THREE.PlaneGeometry(15, 11.5),
+      new THREE.MeshBasicMaterial({
+        color: 0xffa2c2,
+        transparent: true,
+        opacity: 0.34,
+        side: THREE.DoubleSide,
+      })
+    );
+    glow.position.set(0, 0.1, -4.7);
+    group.add(glow);
+
+    const createPhoto = (texture, xOffset) => {
+      const frame = new THREE.Mesh(
+        new THREE.PlaneGeometry(6.5, 8.8),
+        new THREE.MeshPhysicalMaterial({
+          color: 0xffdfe9,
+          emissive: 0xff89b1,
+          emissiveIntensity: 0.35,
+          transparent: true,
+          opacity: 0.92,
+          metalness: 0.15,
+          roughness: 0.2,
+          side: THREE.DoubleSide,
+        })
+      );
+      frame.position.set(xOffset, 0.1, -3.8);
+      group.add(frame);
+
+      const image = new THREE.Mesh(
+        new THREE.PlaneGeometry(5.5, 7.4),
+        new THREE.MeshBasicMaterial({
+          map: texture,
+          transparent: true,
+          side: THREE.DoubleSide,
+        })
+      );
+      image.position.set(xOffset, 0.1, -3.3);
+      group.add(image);
+
+      const frameBorder = new THREE.Mesh(
+        new THREE.PlaneGeometry(5.9, 7.8),
+        new THREE.MeshBasicMaterial({
+          color: 0xffebf2,
+          transparent: true,
+          opacity: 0.28,
+          side: THREE.DoubleSide,
+        })
+      );
+      frameBorder.position.set(xOffset, 0.1, -2.9);
+      group.add(frameBorder);
+    };
+
+    createPhoto(texture1, -2.9);
+    createPhoto(texture2, 2.9);
+
+    group.position.set(0, 0.6, -1.5);
+    group.rotation.y = -0.12;
+    this.portraitGroup = group;
+    this.scene.add(group);
   }
 
   // MAJESTIC 3D PARAMETRIC HEART (MUCH LARGER, BRIGHTER & GLOWING)
@@ -327,6 +401,14 @@ export class Romance3DScene {
         }
       }
       this.fireflies.geometry.attributes.position.needsUpdate = true;
+    }
+
+    if (this.portraitGroup) {
+      this.portraitGroup.position.x = this.mouse.x * 1.3;
+      this.portraitGroup.position.y = 0.6 + Math.sin(elapsedTime * 1.3) * 0.35;
+      this.portraitGroup.rotation.y = -0.12 + this.mouse.x * 0.55 + Math.sin(elapsedTime * 0.6) * 0.15;
+      this.portraitGroup.rotation.x = -this.mouse.y * 0.25;
+      this.portraitGroup.rotation.z = Math.sin(elapsedTime * 0.8) * 0.08;
     }
 
     // 3D Heart realistic pulsation & interactive rotation

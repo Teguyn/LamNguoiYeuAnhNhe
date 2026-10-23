@@ -211,59 +211,60 @@ function dodgeNoButton(e) {
   const btnRect = btnNo.getBoundingClientRect();
   const yesRect = btnYes.getBoundingClientRect();
 
-  const clamp = (value, min, max) => Math.min(Math.max(value, min), max);
-  const padding = 12;
-  const minX = padding;
-  const minY = padding;
-  const maxX = Math.max(minX, areaRect.width - btnRect.width - padding);
-  const maxY = Math.max(minY, areaRect.height - btnRect.height - padding);
+  const margin = 14;
+  const xMin = margin;
+  const yMin = margin;
+  const xMax = Math.max(xMin, areaRect.width - btnRect.width - margin);
+  const yMax = Math.max(yMin, areaRect.height - btnRect.height - margin);
 
   const yesCenterX = yesRect.left - areaRect.left + yesRect.width / 2;
   const yesCenterY = yesRect.top - areaRect.top + yesRect.height / 2;
-  const noCenterX = btnRect.left - areaRect.left + btnRect.width / 2;
-  const noCenterY = btnRect.top - areaRect.top + btnRect.height / 2;
+  const clickX = e ? e.clientX - areaRect.left : yesCenterX + 90;
+  const clickY = e ? e.clientY - areaRect.top : yesCenterY + 90;
 
-  const clickX = e ? (e.clientX - areaRect.left) : noCenterX;
-  const clickY = e ? (e.clientY - areaRect.top) : noCenterY;
+  const candidates = [
+    { x: xMin, y: yMin },
+    { x: xMax, y: yMin },
+    { x: xMin, y: yMax },
+    { x: xMax, y: yMax },
+    { x: (areaRect.width - btnRect.width) / 2, y: yMin },
+    { x: (areaRect.width - btnRect.width) / 2, y: yMax },
+    { x: xMin, y: (areaRect.height - btnRect.height) / 2 },
+    { x: xMax, y: (areaRect.height - btnRect.height) / 2 },
+  ];
 
-  let dx = noCenterX - clickX;
-  let dy = noCenterY - clickY;
+  let best = null;
 
-  if (Math.hypot(dx, dy) < 12) {
-    dx = yesCenterX - clickX;
-    dy = yesCenterY - clickY;
+  for (const candidate of candidates) {
+    const centerX = candidate.x + btnRect.width / 2;
+    const centerY = candidate.y + btnRect.height / 2;
+    const distanceFromClick = Math.hypot(centerX - clickX, centerY - clickY);
+    const distanceFromYes = Math.hypot(centerX - yesCenterX, centerY - yesCenterY);
+
+    if (distanceFromYes < 80) continue;
+
+    const score = distanceFromClick + distanceFromYes * 0.9;
+    if (!best || score > best.score) {
+      best = { ...candidate, score };
+    }
   }
 
-  const length = Math.max(1, Math.hypot(dx, dy));
-  const dirX = dx / length;
-  const dirY = dy / length;
-
-  let newX = noCenterX;
-  let newY = noCenterY;
-  let attempts = 0;
-
-  do {
-    const moveX = 80 + Math.random() * 110 + dodgeCount * 12;
-    const moveY = 70 + Math.random() * 100 + dodgeCount * 10;
-    const candidateX = noCenterX + dirX * moveX + (Math.random() - 0.5) * 40;
-    const candidateY = noCenterY + dirY * moveY + (Math.random() - 0.5) * 40;
-
-    newX = clamp(candidateX - btnRect.width / 2, minX, maxX);
-    newY = clamp(candidateY - btnRect.height / 2, minY, maxY);
-    attempts++;
-  } while (
-    attempts < 20 &&
-    Math.hypot(newX + btnRect.width / 2 - yesCenterX, newY + btnRect.height / 2 - yesCenterY) < 130
-  );
+  if (!best) {
+    best = {
+      x: Math.min(xMax, Math.max(xMin, areaRect.width - btnRect.width - margin)),
+      y: Math.min(yMax, Math.max(yMin, margin)),
+      score: 0,
+    };
+  }
 
   btnNo.style.position = 'absolute';
-  btnNo.style.left = `${newX}px`;
-  btnNo.style.top = `${newY}px`;
+  btnNo.style.left = `${best.x}px`;
+  btnNo.style.top = `${best.y}px`;
   btnNo.style.bottom = 'auto';
   btnNo.style.right = 'auto';
-  btnNo.style.transform = `rotate(${(Math.random() - 0.5) * 12}deg) scale(${1 + Math.random() * 0.08})`;
-  btnNo.style.transition = 'left 0.18s ease, top 0.18s ease, transform 0.18s ease, background 0.2s ease, box-shadow 0.2s ease';
-  btnNo.style.zIndex = '20';
+  btnNo.style.transform = 'none';
+  btnNo.style.transition = 'left 0.16s ease, top 0.16s ease, transform 0.16s ease';
+  btnNo.style.zIndex = '60';
 
   showDodgeBubble();
 
@@ -271,11 +272,8 @@ function dodgeNoButton(e) {
   gsap.to(btnYes, { scale, duration: 0.25, ease: 'back.out(2)' });
 }
 
-btnNo.addEventListener('mouseenter', dodgeNoButton);
-btnNo.addEventListener('pointerenter', dodgeNoButton);
 btnNo.addEventListener('touchstart', dodgeNoButton, { passive: false });
 btnNo.addEventListener('pointerdown', dodgeNoButton, { passive: false });
-btnNo.addEventListener('click', dodgeNoButton);
 
 // ======================================================
 // 5. YES BUTTON — Celebration!
