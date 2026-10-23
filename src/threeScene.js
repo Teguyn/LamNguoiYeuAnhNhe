@@ -11,6 +11,9 @@ export class Romance3DScene {
     this.mouse = { x: 0, y: 0, targetX: 0, targetY: 0 };
     this.heartState = 'normal'; // 'normal' | 'supernova'
     this.heartScale = 1;
+    this.portraitReveal = 0.08;
+    this.portraitRevealTarget = 0.08;
+    this.portraitMaterials = [];
 
     this.initCamera();
     this.initRenderer();
@@ -184,6 +187,8 @@ export class Romance3DScene {
         })
       );
       image.position.set(xOffset, 0.1, -3.3);
+      image.material.userData.baseOpacity = 0.92;
+      this.portraitMaterials.push(image.material);
       group.add(image);
 
       const frameBorder = new THREE.Mesh(
@@ -357,6 +362,10 @@ export class Romance3DScene {
 
   triggerSupernova() {
     this.heartState = 'supernova';
+  }
+
+  setPortraitReveal(progress) {
+    this.portraitRevealTarget = Math.max(0.08, Math.min(1, progress));
   }
 
   bindEvents() {

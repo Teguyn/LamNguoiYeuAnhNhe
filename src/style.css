@@ -217,6 +217,7 @@ body {
   position: relative;
   width: 100vw;
   height: 100dvh;
+  min-height: 100svh;
   min-height: 100dvh;
   padding: 0;
   z-index: 10;
@@ -231,6 +232,7 @@ body {
   justify-content: center;
   width: 100vw;
   height: 100dvh;
+  min-height: 100svh;
   min-height: 100dvh;
   padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
   opacity: 0;
@@ -794,15 +796,15 @@ body {
   font-weight: 700;
   line-height: 0.95;
   letter-spacing: 0.02em;
-  color: #ffb6d2;
+  color: #ffd1e2;
   background: transparent;
   border: 0;
   border-radius: 0;
   padding: 10px 0;
   box-shadow: none;
-  -webkit-text-fill-color: #ffb6d2;
-  -webkit-text-stroke: 0.8px rgba(255, 235, 244, 0.9);
-  text-shadow: 0 2px 0 rgba(87, 5, 39, 0.98), 0 4px 12px rgba(0, 0, 0, 0.9), 0 0 8px rgba(255, 45, 115, 0.95), 0 0 20px rgba(255, 45, 115, 0.78), 0 0 38px rgba(255, 117, 160, 0.58);
+  -webkit-text-fill-color: #ffd1e2;
+  -webkit-text-stroke: 1px rgba(255, 247, 251, 0.98);
+  text-shadow: 0 2px 0 rgba(87, 5, 39, 0.98), 0 4px 12px rgba(0, 0, 0, 0.9), 0 0 10px rgba(255, 80, 145, 1), 0 0 24px rgba(255, 45, 115, 0.9), 0 0 44px rgba(255, 117, 160, 0.72);
   filter: drop-shadow(0 0 10px rgba(255, 120, 160, 0.45));
   max-width: 100%;
   overflow-wrap: anywhere;
@@ -840,15 +842,15 @@ body {
   font-weight: 700;
   line-height: 1.08;
   letter-spacing: 0.02em;
-  color: #ffb6d2;
+  color: #ffd1e2;
   background: transparent;
   border: 0;
   border-radius: 0;
   padding: 10px 0;
   box-shadow: none;
-  -webkit-text-fill-color: #ffb6d2;
-  -webkit-text-stroke: 0.8px rgba(255, 235, 244, 0.9);
-  text-shadow: 0 2px 0 rgba(87, 5, 39, 0.98), 0 4px 12px rgba(0, 0, 0, 0.9), 0 0 8px rgba(255, 45, 115, 0.95), 0 0 20px rgba(255, 45, 115, 0.78), 0 0 38px rgba(255, 117, 160, 0.58);
+  -webkit-text-fill-color: #ffd1e2;
+  -webkit-text-stroke: 1px rgba(255, 247, 251, 0.98);
+  text-shadow: 0 2px 0 rgba(87, 5, 39, 0.98), 0 4px 12px rgba(0, 0, 0, 0.9), 0 0 10px rgba(255, 80, 145, 1), 0 0 24px rgba(255, 45, 115, 0.9), 0 0 44px rgba(255, 117, 160, 0.72);
   filter: drop-shadow(0 0 10px rgba(255, 120, 160, 0.45));
 }
 
@@ -983,7 +985,7 @@ body {
   }
 
   #scene-proposal {
-    padding: max(10px, var(--safe-top)) 0 max(10px, var(--safe-bottom));
+    padding: max(10px, var(--safe-top)) 12px max(10px, var(--safe-bottom));
     overflow-y: auto;
     overflow-x: hidden;
   }

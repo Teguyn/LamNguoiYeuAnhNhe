@@ -278,7 +278,7 @@ function dodgeNoButton(e) {
   btnNo.style.bottom = 'auto';
   btnNo.style.right = 'auto';
   btnNo.style.transform = 'none';
-  btnNo.style.transition = 'left 0.65s cubic-bezier(0.65, 0, 0.35, 1), top 0.65s cubic-bezier(0.65, 0, 0.35, 1)';
+  btnNo.style.transition = 'left 0.52s cubic-bezier(0.65, 0, 0.35, 1), top 0.52s cubic-bezier(0.65, 0, 0.35, 1)';
   btnNo.style.zIndex = '60';
   btnNo.style.pointerEvents = 'auto';
 
@@ -390,12 +390,28 @@ btnSaveCert.addEventListener('click', () => {
     scale: Math.min(window.devicePixelRatio * 2, 3),
     useCORS: true,
     logging: false,
-  }).then((canvas) => {
-    const link = document.createElement('a');
-    link.download = 'ky-niem-be-ngoc.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
-    if (label) label.textContent = 'Đã lưu ảnh kỷ niệm';
+  }).then(async (canvas) => {
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/png'));
+    if (!blob) throw new Error('Không tạo được file PNG');
+
+    const file = new File([blob], 'ky-niem-be-ngoc.png', { type: 'image/png' });
+    if (navigator.share && navigator.canShare?.({ files: [file] })) {
+      await navigator.share({
+        title: 'Kỷ niệm Bé Ngọc',
+        text: 'Kỷ niệm ngày hai ta chính thức yêu nhau 💕',
+        files: [file],
+      });
+    } else {
+      const imageUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.download = 'ky-niem-be-ngoc.png';
+      link.href = imageUrl;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.click();
+      if (label) label.textContent = 'Mở ảnh để lưu';
+      window.setTimeout(() => URL.revokeObjectURL(imageUrl), 60000);
+    }
   }).catch((error) => {
     console.error('Không thể tạo ảnh kỷ niệm:', error);
     if (label) label.textContent = 'Chụp ảnh thất bại';
