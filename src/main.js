@@ -229,7 +229,6 @@ function dodgeNoButton(e) {
   const clickX = e ? e.clientX - areaRect.left : areaRect.width * 0.8;
   const clickY = e ? e.clientY - areaRect.top : areaRect.height * 0.2;
 
-  const candidates = [];
   const positions = [
     { x: xMin, y: yMin },
     { x: xMax, y: yMin },
@@ -243,7 +242,14 @@ function dodgeNoButton(e) {
     { x: xMax - 18, y: yMin + 20 },
     { x: xMin + 18, y: yMax - 20 },
     { x: xMax - 18, y: yMax - 20 },
+    { x: Math.min(xMax, Math.max(xMin, areaRect.width * 0.26)), y: Math.min(yMax, Math.max(yMin, areaRect.height * 0.25)) },
+    { x: Math.min(xMax, Math.max(xMin, areaRect.width * 0.74)), y: Math.min(yMax, Math.max(yMin, areaRect.height * 0.72)) },
+    { x: Math.min(xMax, Math.max(xMin, areaRect.width * 0.1)), y: Math.min(yMax, Math.max(yMin, areaRect.height * 0.72)) },
+    { x: Math.min(xMax, Math.max(xMin, areaRect.width * 0.9)), y: Math.min(yMax, Math.max(yMin, areaRect.height * 0.2)) }
   ];
+
+  let best = null;
+  let bestScore = -Infinity;
 
   for (const pos of positions) {
     const centerX = pos.x + buttonWidth / 2;
@@ -252,23 +258,25 @@ function dodgeNoButton(e) {
     const distanceFromYes = Math.hypot(centerX - yesCenterX, centerY - yesCenterY);
     const distanceFromCurrent = Math.hypot(centerX - currentCenterX, centerY - currentCenterY);
 
-    if (distanceFromYes < 100) continue;
-    if (distanceFromCurrent < 14) continue;
+    if (distanceFromYes < 110) continue;
+    if (distanceFromCurrent < 10) continue;
 
-    const score = distanceFromClick * 1.8 + distanceFromCurrent * 0.4 + distanceFromYes * 0.6 + Math.random() * 20;
-    candidates.push({ ...pos, score });
+    const score = distanceFromClick * 1.9 + distanceFromCurrent * 0.35 + distanceFromYes * 0.75 + (Math.random() * 28);
+    if (score > bestScore) {
+      bestScore = score;
+      best = pos;
+    }
   }
-
-  let best = candidates.sort((a, b) => b.score - a.score)[0];
 
   if (!best) {
-    const fallbackX = Math.min(xMax, Math.max(xMin, xMax * 0.7));
-    const fallbackY = Math.min(yMax, Math.max(yMin, yMax * 0.3));
-    best = { x: fallbackX, y: fallbackY, score: 0 };
+    best = {
+      x: Math.min(xMax, Math.max(xMin, areaRect.width * 0.55)),
+      y: Math.min(yMax, Math.max(yMin, areaRect.height * 0.35))
+    };
   }
 
-  const rotate = ((Math.random() - 0.5) * 24).toFixed(1);
-  const scale = (0.94 + Math.random() * 0.16).toFixed(2);
+  const rotate = ((Math.random() - 0.5) * 20).toFixed(1);
+  const scale = (0.94 + Math.random() * 0.15).toFixed(2);
 
   btnNo.style.position = 'absolute';
   btnNo.style.left = `${best.x}px`;
@@ -276,7 +284,7 @@ function dodgeNoButton(e) {
   btnNo.style.bottom = 'auto';
   btnNo.style.right = 'auto';
   btnNo.style.transform = `rotate(${rotate}deg) scale(${scale})`;
-  btnNo.style.transition = 'left 0.18s cubic-bezier(0.24, 1, 0.25, 1), top 0.18s cubic-bezier(0.24, 1, 0.25, 1), transform 0.18s ease';
+  btnNo.style.transition = 'left 0.16s cubic-bezier(0.24, 1, 0.25, 1), top 0.16s cubic-bezier(0.24, 1, 0.25, 1), transform 0.16s ease';
   btnNo.style.zIndex = '60';
   btnNo.style.pointerEvents = 'auto';
 
