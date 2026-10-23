@@ -1,5 +1,6 @@
 import './style.css';
 import confetti from 'canvas-confetti';
+import html2canvas from 'html2canvas';
 import { gsap } from 'gsap';
 import { Romance3DScene } from './threeScene';
 import { RomanticAudioEngine } from './audio';
@@ -207,49 +208,42 @@ function dodgeNoButton(e) {
   audioEngine.playWhooshSound();
   dodgeCount++;
 
-  const areaRect = proposalActions.getBoundingClientRect();
   const btnRect = btnNo.getBoundingClientRect();
   const yesRect = btnYes.getBoundingClientRect();
   const buttonWidth = Math.max(120, btnRect.width || 128);
   const buttonHeight = Math.max(40, btnRect.height || 42);
-  const margin = 12;
+  const margin = 20;
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
 
   const xMin = margin;
   const yMin = margin;
-  const xMax = Math.max(xMin, areaRect.width - buttonWidth - margin);
-  const yMax = Math.max(yMin, areaRect.height - buttonHeight - margin);
+  const xMax = Math.max(xMin, viewportWidth - buttonWidth - margin);
+  const yMax = Math.max(yMin, viewportHeight - buttonHeight - margin);
 
-  const currentLeft = Number.parseFloat(btnNo.style.left || '0') || (btnNo.offsetLeft || 0);
-  const currentTop = Number.parseFloat(btnNo.style.top || '0') || (btnNo.offsetTop || 0);
+  const currentRect = btnNo.getBoundingClientRect();
+  const currentLeft = currentRect.left;
+  const currentTop = currentRect.top;
   const currentCenterX = currentLeft + buttonWidth / 2;
   const currentCenterY = currentTop + buttonHeight / 2;
 
-  const yesCenterX = yesRect.left - areaRect.left + yesRect.width / 2;
-  const yesCenterY = yesRect.top - areaRect.top + yesRect.height / 2;
-  const clickX = e ? e.clientX - areaRect.left : areaRect.width * 0.8;
-  const clickY = e ? e.clientY - areaRect.top : areaRect.height * 0.2;
-
-  const positions = [
+  const yesCenterX = yesRect.left + yesRect.width / 2;
+  const yesCenterY = yesRect.top + yesRect.height / 2;
+  const clickX = e ? e.clientX : viewportWidth * 0.8;
+  const clickY = e ? e.clientY : viewportHeight * 0.2;
+  const safeGap = 24;
+  const positions = Array.from({ length: 80 }, () => ({
+    x: xMin + Math.random() * Math.max(0, xMax - xMin),
+    y: yMin + Math.random() * Math.max(0, yMax - yMin),
+  }));
+  positions.push(
     { x: xMin, y: yMin },
     { x: xMax, y: yMin },
     { x: xMin, y: yMax },
     { x: xMax, y: yMax },
-    { x: (areaRect.width - buttonWidth) / 2, y: yMin },
-    { x: (areaRect.width - buttonWidth) / 2, y: yMax },
-    { x: xMin, y: (areaRect.height - buttonHeight) / 2 },
-    { x: xMax, y: (areaRect.height - buttonHeight) / 2 },
-    { x: xMin + 18, y: yMin + 20 },
-    { x: xMax - 18, y: yMin + 20 },
-    { x: xMin + 18, y: yMax - 20 },
-    { x: xMax - 18, y: yMax - 20 },
-    { x: Math.min(xMax, Math.max(xMin, areaRect.width * 0.26)), y: Math.min(yMax, Math.max(yMin, areaRect.height * 0.25)) },
-    { x: Math.min(xMax, Math.max(xMin, areaRect.width * 0.74)), y: Math.min(yMax, Math.max(yMin, areaRect.height * 0.72)) },
-    { x: Math.min(xMax, Math.max(xMin, areaRect.width * 0.1)), y: Math.min(yMax, Math.max(yMin, areaRect.height * 0.72)) },
-    { x: Math.min(xMax, Math.max(xMin, areaRect.width * 0.9)), y: Math.min(yMax, Math.max(yMin, areaRect.height * 0.2)) }
-  ];
+  );
 
-  let best = null;
-  let bestScore = -Infinity;
+  const validPositions = [];
 
   for (const pos of positions) {
     const centerX = pos.x + buttonWidth / 2;
@@ -258,33 +252,33 @@ function dodgeNoButton(e) {
     const distanceFromYes = Math.hypot(centerX - yesCenterX, centerY - yesCenterY);
     const distanceFromCurrent = Math.hypot(centerX - currentCenterX, centerY - currentCenterY);
 
-    if (distanceFromYes < 110) continue;
+    const overlapsYes =
+      centerX + buttonWidth / 2 > yesCenterX - yesRect.width / 2 - safeGap &&
+      centerX - buttonWidth / 2 < yesCenterX + yesRect.width / 2 + safeGap &&
+      centerY + buttonHeight / 2 > yesCenterY - yesRect.height / 2 - safeGap &&
+      centerY - buttonHeight / 2 < yesCenterY + yesRect.height / 2 + safeGap;
+
+    if (overlapsYes) continue;
     if (distanceFromCurrent < 10) continue;
 
-    const score = distanceFromClick * 1.9 + distanceFromCurrent * 0.35 + distanceFromYes * 0.75 + (Math.random() * 28);
-    if (score > bestScore) {
-      bestScore = score;
-      best = pos;
-    }
+    validPositions.push({
+      ...pos,
+      score: distanceFromClick * 0.35 + distanceFromCurrent * 0.2 + distanceFromYes * 0.25 + Math.random() * 180,
+    });
   }
 
-  if (!best) {
-    best = {
-      x: Math.min(xMax, Math.max(xMin, areaRect.width * 0.55)),
-      y: Math.min(yMax, Math.max(yMin, areaRect.height * 0.35))
-    };
-  }
+  validPositions.sort((a, b) => b.score - a.score);
+  const choicePool = validPositions.slice(0, Math.max(1, Math.ceil(validPositions.length * 0.65)));
+  const best = choicePool[Math.floor(Math.random() * choicePool.length)] || { x: xMin, y: yMax };
 
-  const rotate = ((Math.random() - 0.5) * 20).toFixed(1);
-  const scale = (0.94 + Math.random() * 0.15).toFixed(2);
-
-  btnNo.style.position = 'absolute';
+  if (btnNo.parentElement !== document.body) document.body.appendChild(btnNo);
+  btnNo.style.position = 'fixed';
   btnNo.style.left = `${best.x}px`;
   btnNo.style.top = `${best.y}px`;
   btnNo.style.bottom = 'auto';
   btnNo.style.right = 'auto';
-  btnNo.style.transform = `rotate(${rotate}deg) scale(${scale})`;
-  btnNo.style.transition = 'left 0.16s cubic-bezier(0.24, 1, 0.25, 1), top 0.16s cubic-bezier(0.24, 1, 0.25, 1), transform 0.16s ease';
+  btnNo.style.transform = 'none';
+  btnNo.style.transition = 'left 0.65s cubic-bezier(0.65, 0, 0.35, 1), top 0.65s cubic-bezier(0.65, 0, 0.35, 1)';
   btnNo.style.zIndex = '60';
   btnNo.style.pointerEvents = 'auto';
 
@@ -383,7 +377,34 @@ btnMoreFireworks.addEventListener('click', () => {
 });
 
 btnSaveCert.addEventListener('click', () => {
-  alert('📸 Hãy chụp lại màn hình để lưu kỷ niệm ngày hai ta chính thức yêu nhau nhé, Ngọc yêu! ❤️');
+  const certificate = document.getElementById('love-certificate');
+  if (!certificate || btnSaveCert.disabled) return;
+
+  const label = btnSaveCert.querySelector('span');
+  const originalLabel = label?.textContent;
+  btnSaveCert.disabled = true;
+  if (label) label.textContent = 'Đang tạo ảnh...';
+
+  html2canvas(certificate, {
+    backgroundColor: '#160916',
+    scale: Math.min(window.devicePixelRatio * 2, 3),
+    useCORS: true,
+    logging: false,
+  }).then((canvas) => {
+    const link = document.createElement('a');
+    link.download = 'ky-niem-be-ngoc.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    if (label) label.textContent = 'Đã lưu ảnh kỷ niệm';
+  }).catch((error) => {
+    console.error('Không thể tạo ảnh kỷ niệm:', error);
+    if (label) label.textContent = 'Chụp ảnh thất bại';
+  }).finally(() => {
+    window.setTimeout(() => {
+      btnSaveCert.disabled = false;
+      if (label) label.textContent = originalLabel;
+    }, 1800);
+  });
 });
 
 // ======================================================

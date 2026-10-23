@@ -15,6 +15,7 @@
     "@emailjs/browser": "^5.0.3",
     "canvas-confetti": "^1.9.4",
     "gsap": "^3.15.0",
+    "html2canvas": "^1.4.1",
     "lucide": "^1.61.0",
     "three": "^0.186.1"
   }
