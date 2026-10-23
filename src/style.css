@@ -228,7 +228,7 @@ body {
   inset: 0;
   display: flex;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-start;
   padding: 0;
   opacity: 0;
   visibility: hidden;
@@ -589,25 +589,23 @@ body {
 /* ==================== SCENE 3: PROPOSAL ==================== */
 .proposal-container {
   position: relative;
-  max-width: none;
-  width: 100vw;
+  max-width: 540px;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
   z-index: 20;
 }
 
 .proposal-card {
-  width: 100vw;
+  width: 100%;
   padding: 0 20px 24px;
   background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
   border: 1px solid rgba(255, 192, 203, 0.18);
-  border-left: none;
-  border-right: none;
-  border-radius: 0;
+  border-radius: 28px;
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  box-shadow: none;
+  box-shadow: var(--glass-shadow), 0 0 50px rgba(255, 45, 96, 0.18);
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -858,8 +856,39 @@ body {
 }
 
 @media (max-width: 430px) {
+  #app {
+    width: 100vw;
+    max-width: 100vw;
+    overflow: hidden;
+  }
+
+  .scene {
+    justify-content: flex-start;
+    padding: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .proposal-container {
+    width: 100vw;
+    max-width: 100vw;
+    margin: 0;
+    padding: 0;
+  }
+
   .proposal-card {
+    width: 100vw;
+    margin: 0;
+    padding: 0 18px 24px;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    box-shadow: none;
     overflow: visible;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    border-radius: 20px 20px 0 0;
   }
 
   .proposal-actions {
