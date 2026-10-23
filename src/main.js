@@ -306,6 +306,10 @@ btnNo.addEventListener('pointerdown', (event) => {
   dodgeNoButton(event);
 });
 
+btnNo.addEventListener('pointerenter', () => {
+  dodgeNoButton();
+});
+
 // ======================================================
 // 5. YES BUTTON — Celebration!
 // ======================================================
