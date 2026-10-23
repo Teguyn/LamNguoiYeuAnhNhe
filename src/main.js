@@ -306,8 +306,10 @@ btnNo.addEventListener('pointerdown', (event) => {
   dodgeNoButton(event);
 });
 
-btnNo.addEventListener('pointerenter', () => {
-  dodgeNoButton();
+btnNo.addEventListener('pointerenter', (event) => {
+  if (event.pointerType === 'mouse') {
+    dodgeNoButton();
+  }
 });
 
 // ======================================================
