@@ -273,8 +273,11 @@ function dodgeNoButton(e) {
   gsap.to(btnYes, { scale: scaleYes, duration: 0.25, ease: 'back.out(2)' });
 }
 
-btnNo.addEventListener('touchstart', dodgeNoButton, { passive: false });
-btnNo.addEventListener('pointerdown', dodgeNoButton, { passive: false });
+btnNo.addEventListener('pointerdown', (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  dodgeNoButton(event);
+});
 
 // ======================================================
 // 5. YES BUTTON — Celebration!
